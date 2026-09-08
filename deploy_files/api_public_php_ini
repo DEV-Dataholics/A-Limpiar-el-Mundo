@@ -1,3 +1,0 @@
-; PHP ini for CodeIgniter API - api/public/
-; Enables intl extension required by CodeIgniter 4
-extension=intl

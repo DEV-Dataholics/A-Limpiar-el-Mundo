@@ -1,11 +1,10 @@
-# Site5 FTP Upload Script - Somos Comunidad
-# Uploads frontend dist/ and api/ to production server
+# FTP Upload Script for A Limpiar el Mundo
 
 $FTP_HOST    = "ftp.dataholics.com.mx"
-$FTP_USER    = "SC_DEV@dataholics.com.mx"
-$FTP_PASS    = "b}%gI?we_2vz"
+$FTP_USER    = "DEV-UW@alimpiarelmundo.dataholics.com.mx"
+$FTP_PASS    = "itc=imD3B=LU"
 $REMOTE_ROOT = "/"
-$BASE        = "c:\Users\luisc\Documents\Dataholics\Dataholics Guidelines\UW_SomosComunidad"
+$BASE        = "C:\Users\luisc\Documents\Dataholics\Dataholics Guidelines\proyectos\A Limpiar el Mundo"
 
 $ErrorCount = 0
 $SuccessCount = 0
@@ -32,19 +31,16 @@ function Upload-Dir {
     }
 }
 
-# --- Upload frontend dist/ to public root ---
 Write-Host "`n=== Uploading frontend (dist/) ===" -ForegroundColor Cyan
 Upload-Dir -LocalDir "$BASE\frontend\dist" -RemoteDir "$REMOTE_ROOT"
 
-# --- Upload backend api/ ---
 Write-Host "`n=== Uploading backend (api/) ===" -ForegroundColor Cyan
-# Upload everything except: .env (we upload that separately), vendor/ will be last
 $apiExclude = @('.env', '.env.production-template', 'mysql-credentials.offline.local', '.env.production')
 Get-ChildItem -Path "$BASE\api" -Recurse -File | Where-Object {
-    $_.Name -notin $apiExclude -and $_.FullName -notmatch '\\\.git\\'
+    $_.Name -notin $apiExclude -and $_.FullName -notmatch '\\\.git\\' -and $_.FullName -notmatch '\\tests\\'
 } | ForEach-Object {
     $rel = $_.FullName.Substring("$BASE\api".Length).Replace('\','/')
-    Upload-File -LocalPath $_.FullName -RemotePath "${REMOTE_ROOT}/api${rel}"
+    Upload-File -LocalPath $_.FullName -RemotePath "${REMOTE_ROOT}api${rel}"
 }
 
 Write-Host "`n=== Upload Summary ===" -ForegroundColor Cyan
