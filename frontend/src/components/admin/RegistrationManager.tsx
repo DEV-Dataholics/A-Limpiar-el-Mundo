@@ -308,6 +308,7 @@ export default function RegistrationManager({ token }: { token: string }) {
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'cancelled' | 'all'>('pending');
   const [selectedRecord, setSelectedRecord] = useState<Registration | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'full' | 'light'>('full');
 
   useEffect(() => { fetchRegistrations(); }, []);
 
@@ -449,8 +450,24 @@ export default function RegistrationManager({ token }: { token: string }) {
             </svg>
           </div>
 
-          <div className="text-xs text-[#4A5568] font-medium">
-            Mostrando <strong className="text-[#0044B5]">{filteredRegistrations.length}</strong> registro(s)
+          <div className="text-xs text-[#4A5568] font-medium flex items-center gap-4">
+            <div className="flex bg-slate-100 rounded-lg p-1 border border-slate-200">
+              <button
+                onClick={() => setViewMode('full')}
+                className={`px-3 py-1 rounded-md text-xs font-bold transition-colors ${viewMode === 'full' ? 'bg-white shadow text-[#0044B5]' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Completo
+              </button>
+              <button
+                onClick={() => setViewMode('light')}
+                className={`px-3 py-1 rounded-md text-xs font-bold transition-colors ${viewMode === 'light' ? 'bg-white shadow text-[#0044B5]' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Ligero (Sin imágenes)
+              </button>
+            </div>
+            <span>
+              Mostrando <strong className="text-[#0044B5]">{filteredRegistrations.length}</strong> registro(s)
+            </span>
           </div>
         </div>
 
@@ -521,12 +538,16 @@ export default function RegistrationManager({ token }: { token: string }) {
                       <div className="font-black text-[#0044B5] text-base">
                         {totalHours}h
                       </div>
-                      <div className="text-[10px] text-[#4A5568] font-semibold">
-                        {volCount} vol. × {durHours}h
-                      </div>
-                      <div className="text-[10px] text-[#8A6400] font-bold mt-0.5">
-                        {reg.beneficiaries_count} ben.
-                      </div>
+                      {viewMode === 'full' && (
+                        <>
+                          <div className="text-[10px] text-[#4A5568] font-semibold">
+                            {volCount} vol. × {durHours}h
+                          </div>
+                          <div className="text-[10px] text-[#8A6400] font-bold mt-0.5">
+                            {reg.beneficiaries_count} ben.
+                          </div>
+                        </>
+                      )}
                     </td>
 
                     {/* Estado */}

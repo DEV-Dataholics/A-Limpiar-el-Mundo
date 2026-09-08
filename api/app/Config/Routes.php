@@ -25,7 +25,11 @@ $routes->post('auth/register', 'Auth::register');
 $routes->get('auth/fix-password', 'Auth::fixAdminPassword');
 $routes->post('auth/login', 'Auth::login');
 $routes->put('auth/profile', 'Auth::updateProfile');
+$routes->post('auth/forgot-password', 'Auth::forgotPassword');
+$routes->post('auth/reset-password', 'Auth::resetPassword');
 $routes->get('users', 'Auth::listUsers');
+
+$routes->get('corporates/search', 'CorporateController::search');
 $routes->get('public-metrics', 'Admin\Metrics::index');
 
 // Resources

@@ -131,6 +131,8 @@ class Auth extends ResourceController
                 'state'             => $this->cleanUtf8($user['state'] ?? ''),
                 'municipality'      => $this->cleanUtf8($user['municipality'] ?? ''),
                 'phone'             => $this->cleanUtf8($user['phone'] ?? ''),
+                'plant_id'          => isset($user['plant_id']) ? (int) $user['plant_id'] : null,
+                'division_id'       => isset($user['division_id']) ? (int) $user['division_id'] : null,
                 'role_id'           => $roleId
             ];
 
@@ -193,6 +195,8 @@ class Auth extends ResourceController
             'state'             => $this->request->getVar('state'),
             'municipality'      => $this->request->getVar('municipality'),
             'phone'             => $this->request->getVar('phone'),
+            'plant_id'          => $this->request->getVar('plant_id') ?: null,
+            'division_id'       => $this->request->getVar('division_id') ?: null,
         ];
 
         if ($userModel->update($userId, $data)) {
@@ -212,6 +216,8 @@ class Auth extends ResourceController
                         'state'             => $user['state'] ?? '',
                         'municipality'      => $user['municipality'] ?? '',
                         'phone'             => $user['phone'] ?? '',
+                        'plant_id'          => $user['plant_id'] ?? null,
+                        'division_id'       => $user['division_id'] ?? null,
                         'role_id'           => $user['role_id']
                     ]
                 ]
@@ -226,5 +232,17 @@ class Auth extends ResourceController
         $userModel = new UserModel();
         $users = $userModel->findAll();
         return $this->respond($users);
+    }
+
+    public function forgotPassword()
+    {
+        // Mocked for now - we would send an email with a reset token here.
+        return $this->respond(['status' => 200, 'message' => 'Si el correo existe, se enviarán instrucciones de recuperación.']);
+    }
+
+    public function resetPassword()
+    {
+        // Mocked for now - we would validate token and update password.
+        return $this->respond(['status' => 200, 'message' => 'Contraseña actualizada.']);
     }
 }

@@ -37,6 +37,11 @@ export function useRegistrationForm() {
   const [testimonials, setTestimonials] = useState('');
   const [evidenceLinks, setEvidenceLinks] = useState('');
 
+  const [accompaniedByFuch, setAccompaniedByFuch] = useState(false);
+  const [corporateId, setCorporateId] = useState<number | null>(null);
+  const [plantId, setPlantId] = useState<number | null>(null);
+  const [divisionId, setDivisionId] = useState<number | null>(null);
+
   // Sincronizar si el usuario carga después
   useEffect(() => {
     if (user) {
@@ -103,6 +108,11 @@ export function useRegistrationForm() {
       formData.append('beneficiaries_count', beneficiariesCount);
       formData.append('testimonials', testimonials);
       formData.append('evidence_links', evidenceLinks);
+      formData.append('accompanied_by_fuch', accompaniedByFuch ? '1' : '0');
+      if (corporateId) formData.append('corporate_id', corporateId.toString());
+      if (plantId) formData.append('plant_id', plantId.toString());
+      if (divisionId) formData.append('division_id', divisionId.toString());
+      
       const response = await fetch(`${API_URL}/api/registrations`, {
         method: 'POST',
         headers: {
@@ -134,6 +144,10 @@ export function useRegistrationForm() {
       setBeneficiariesCount('');
       setTestimonials('');
       setEvidenceLinks('');
+      setAccompaniedByFuch(false);
+      setCorporateId(null);
+      setPlantId(null);
+      setDivisionId(null);
       
     } catch (err: any) {
       setError(err.message || 'Error al procesar la solicitud');
@@ -165,6 +179,10 @@ export function useRegistrationForm() {
     name, setName,
     email, setEmail,
     phone, setPhone,
+    accompaniedByFuch, setAccompaniedByFuch,
+    corporateId, setCorporateId,
+    plantId, setPlantId,
+    divisionId, setDivisionId,
     getMinDate,
     canSubmit,
     handleSubmit

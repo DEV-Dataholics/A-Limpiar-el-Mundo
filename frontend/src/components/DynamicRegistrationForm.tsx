@@ -28,6 +28,10 @@ export default function DynamicRegistrationForm() {
     beneficiariesCount, setBeneficiariesCount,
     testimonials, setTestimonials,
     evidenceLinks, setEvidenceLinks,
+    accompaniedByFuch, setAccompaniedByFuch,
+    corporateId, setCorporateId,
+    plantId, setPlantId,
+    divisionId, setDivisionId,
     canSubmit,
     handleSubmit
   } = useRegistrationForm();
@@ -75,112 +79,76 @@ export default function DynamicRegistrationForm() {
           <div className="md:col-span-2">
             <label className="block text-xs font-black text-[#0044B5] mb-1 uppercase tracking-wide">Modalidad de la actividad *</label>
             <select
-              value={activityType}
-              onChange={e => {
-                const newType = e.target.value;
-                setActivityType(newType);
-                
-                // Si el usuario tiene una organización en su perfil, la pre-llenamos al cambiar a Corporativa o Personal
-                if (newType === 'Corporativa' || newType === 'Personal') {
-                  setGroupName(user?.organization_name || '');
-                } else {
-                  setGroupName('');
-                }
-
-                if (newType !== 'Institucional') {
-                   setActivityId('');
-                } else {
-                   setCustomActivityName('');
-                }
-              }}
-              className="input-brand w-full px-4 py-3 rounded-lg bg-white"
+              value="Corporativa"
+              disabled
+              className="input-brand w-full px-4 py-3 rounded-lg bg-gray-100 cursor-not-allowed opacity-80"
             >
-              <option value="Institucional">Institucional (Causa oficial)</option>
               <option value="Corporativa">Corporativa</option>
-              <option value="Personal">Personal</option>
-              <option value="Sociedad civil">Sociedad civil</option>
-              <option value="Escuela">Escuela</option>
             </select>
           </div>
 
-          <div className="md:col-span-2">
-            {activityType === 'Institucional' ? (
-              <>
-                <label className="block text-xs font-black text-[#0044B5] mb-1 uppercase tracking-wide">Nombre de la causa institucional *</label>
-                <select
-                  value={activityId || ''}
-                  onChange={e => setActivityId(e.target.value)}
-                  className="input-brand w-full px-4 py-3 rounded-lg"
-                  required
-                >
-                  <option value="">— Selecciona la causa oficial —</option>
-                  {catalog.filter(act => act.type === 'institutional').map(act => (
-                    <option key={act.id} value={act.id}>{act.name}</option>
-                  ))}
-                </select>
-              </>
-            ) : (
-              <>
-                <label className="block text-xs font-black text-[#0044B5] mb-1 uppercase tracking-wide">Nombre de la actividad *</label>
-                <input 
-                  type="text" required placeholder="Ej. Reforestación del parque central"
-                  value={customActivityName} onChange={e => setCustomActivityName(e.target.value)}
-                  className="input-brand w-full px-4 py-3 rounded-lg"
+          <div className="md:col-span-2 bg-[#F4F6FA] border border-[#D8E2F0] rounded-xl p-4 mt-2">
+            <label className="block text-sm font-bold text-[#1A2340] mb-3">
+              ¿Alguien de FUCH (Fondo Unido Chihuahua) te acompañó a la actividad? *
+            </label>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="accompaniedByFuch"
+                  checked={accompaniedByFuch === true}
+                  onChange={() => setAccompaniedByFuch(true)}
+                  className="w-5 h-5 accent-[#0044B5]"
                 />
-              </>
-            )}
+                <span className="text-sm font-medium text-[#4A5568]">Sí</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="accompaniedByFuch"
+                  checked={accompaniedByFuch === false}
+                  onChange={() => setAccompaniedByFuch(false)}
+                  className="w-5 h-5 accent-[#0044B5]"
+                />
+                <span className="text-sm font-medium text-[#4A5568]">No</span>
+              </label>
+            </div>
           </div>
 
-          {/* Campo dinámico según modalidad */}
-          {activityType !== 'Comunidad abierta' && activityType !== 'Institucional' && (
-            <div className="md:col-span-2">
-              {activityType === 'Corporativa' && (
-                <PredictiveCompanySelector
-                  value={groupName}
-                  onChange={setGroupName}
-                  label="Empresa corporativa"
-                  required
-                  placeholder="Escribe para buscar tu empresa o planta..."
-                  helperText="Escribe el nombre o iniciales de la empresa para ver sugerencias predictivas instantáneas."
-                />
-              )}
+          <div className="md:col-span-2">
+            <label className="block text-xs font-black text-[#0044B5] mb-1 uppercase tracking-wide">Nombre de la actividad *</label>
+            <input 
+              type="text" required placeholder="Ej. Reforestación del parque central"
+              value={customActivityName} onChange={e => setCustomActivityName(e.target.value)}
+              className="input-brand w-full px-4 py-3 rounded-lg"
+            />
+          </div>
 
-              {activityType === 'Personal' && (
-                <PredictiveCompanySelector
-                  value={groupName}
-                  onChange={setGroupName}
-                  label="Escuela, OSC, empresa o colectivo (Opcional)"
-                  placeholder="¿A quién representas? (Ej. Yazaki, Lear, UACH...)"
-                  helperText="Escribe el nombre de tu empresa, colectivo o institución para autocompletar."
-                />
-              )}
-
-              {activityType === 'Sociedad civil' && (
-                <PredictiveCompanySelector
-                  value={groupName}
-                  onChange={setGroupName}
-                  label="Nombre de la Organización de la Sociedad Civil (OSC) *"
-                  required
-                  placeholder="Ej. Fundación / Colectivo..."
-                  helperText="Escribe el nombre de tu organización."
-                />
-              )}
-
-              {activityType === 'Escuela' && (
-                <>
-                  <label className="block text-xs font-semibold text-[#4A5568] mb-1">Nombre de la Escuela *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. Escuela Primaria Federal"
-                    value={groupName}
-                    onChange={e => setGroupName(e.target.value)}
-                    className="input-brand w-full px-4 py-3 rounded-lg"
-                  />
-                </>
-              )}
-            </div>
-          )}
+          <div className="md:col-span-2">
+            <PredictiveCompanySelector
+              value={groupName}
+              onChange={setGroupName}
+              label="Empresa corporativa"
+              required
+              placeholder="Escribe para buscar tu empresa o planta..."
+              helperText="Escribe el nombre o iniciales de la empresa para ver sugerencias predictivas instantáneas."
+              onSelectEntity={(entity) => {
+                if (entity.corporate_id) setCorporateId(entity.corporate_id);
+                else if (entity.type === 'corporate') setCorporateId(entity.id);
+                
+                if (entity.plant_id) setPlantId(entity.plant_id);
+                else if (entity.type === 'plant') setPlantId(entity.id);
+                
+                if (entity.division_id) setDivisionId(entity.division_id);
+                else if (entity.type === 'division') setDivisionId(entity.id);
+              }}
+              onClearEntity={() => {
+                setCorporateId(null);
+                setPlantId(null);
+                setDivisionId(null);
+              }}
+            />
+          </div>
 
           <div>
             <label className="block text-xs font-semibold text-[#4A5568] mb-1">Nombre del lugar *</label>
@@ -204,7 +172,9 @@ export default function DynamicRegistrationForm() {
           <div>
             <label className="block text-xs font-semibold text-[#4A5568] mb-1">Fecha de la actividad *</label>
             <input 
-              type="date" required max={new Date().toISOString().split('T')[0]}
+              type="date" required 
+              min={`${new Date().getFullYear()}-09-01`}
+              max={`${new Date().getFullYear()}-09-30`}
               value={scheduledDate} onChange={e => setScheduledDate(e.target.value)}
               className="input-brand w-full px-4 py-3 rounded-lg"
             />
@@ -253,7 +223,7 @@ export default function DynamicRegistrationForm() {
               <span className="text-base leading-none">💡</span>
               <div className="flex-1 leading-relaxed">
                 <span className="font-bold">Aclaración de llenado: </span>
-                Ingresa la duración de la jornada por persona, no la suma de todo el grupo (ej. si 15 personas participaron durante 3 horas, ingresa <strong className="underline">3</strong>). El sistema calculará el impacto total automáticamente.
+                Ingresa la duración por voluntario (horas de la jornada individual), no la sumatoria multiplicada de todos los participantes.
               </div>
             </div>
 

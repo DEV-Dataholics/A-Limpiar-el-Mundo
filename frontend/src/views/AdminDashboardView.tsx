@@ -33,6 +33,7 @@ type MetricData = {
     count: number;
   }>;
   community_count: number;
+  top_corporates?: Array<{ name: string; hours: number; count: number }>;
 };
 
 type NavTab = 'metrics' | 'activities' | 'users' | 'registrations';
@@ -250,6 +251,27 @@ export default function AdminDashboardView() {
                 </h3>
                 <MobilizationReports />
               </section>
+
+              {/* ── TOP 3 CORPORATIVOS ── */}
+              {metrics?.top_corporates && metrics.top_corporates.length > 0 && (
+                <section>
+                  <h3 className="font-antonio text-xl text-[#0044B5] uppercase mb-5 flex items-center gap-2">
+                    <span className="divider-gold" />
+                    Top 3 Corporativos con Mayor Impacto
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {metrics.top_corporates.slice(0, 3).map((corp, index) => (
+                      <div key={index} className="card-brand p-5 relative overflow-hidden flex flex-col items-center text-center">
+                        <div className={`absolute top-0 w-full h-2 ${index === 0 ? 'bg-[#FFBA00]' : index === 1 ? 'bg-slate-300' : 'bg-orange-300'}`}></div>
+                        <div className="text-4xl mb-3 mt-2">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</div>
+                        <h4 className="font-bold text-lg text-[#1A2340] mb-1 line-clamp-1">{corp.name}</h4>
+                        <div className="text-[#0044B5] font-black text-2xl">{corp.hours || 0} hrs</div>
+                        <div className="text-xs text-[#4A5568] uppercase font-bold mt-1">{corp.count || 0} Voluntarios</div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* Estatus de Causas Institucionales */}
               <section>

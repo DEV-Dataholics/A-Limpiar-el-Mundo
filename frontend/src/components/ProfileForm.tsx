@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import LocationSelector from './LocationSelector';
 import PredictiveCompanySelector from './PredictiveCompanySelector';
@@ -9,6 +9,21 @@ export default function ProfileForm({ onSaved }: { onSaved?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [history, setHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (token) {
+      fetch(`${API_URL}/api/registrations/my-history`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const items = Array.isArray(data) ? data : (data.data || []);
+        setHistory(items);
+      })
+      .catch(err => console.error("Error fetching history:", err));
+    }
+  }, [token]);
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -18,7 +33,10 @@ export default function ProfileForm({ onSaved }: { onSaved?: () => void }) {
     organization_name: user?.organization_name || '',
     state: user?.state || '',
     municipality: user?.municipality || '',
-    phone: user?.phone || ''
+    phone: user?.phone || '',
+    locality: user?.locality || '',
+    plant: user?.plant || '',
+    division: user?.division || ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,7 +156,49 @@ export default function ProfileForm({ onSaved }: { onSaved?: () => void }) {
                 onMunicipalityChange={(municipality) => setFormData(prev => ({ ...prev, municipality }))}
               />
             </div>
+            
+            <div>
+              <label className={labelClass}>Localidad</label>
+              <input type="text" name="locality" value={formData.locality} onChange={handleChange} className={inputClass} placeholder="Ej. Ciudad Juárez" />
+            </div>
+            <div>
+              <label className={labelClass}>Planta</label>
+              <input type="text" name="plant" value={formData.plant} onChange={handleChange} className={inputClass} placeholder="Ej. Planta Sur" />
+            </div>
+            <div>
+              <label className={labelClass}>División</label>
+              <input type="text" name="division" value={formData.division} onChange={handleChange} className={inputClass} placeholder="Ej. Automotriz" />
+            </div>
           </div>
+        </section>
+
+        {/* Sección: Historial de Actividades */}
+        <section>
+          <h3 className="text-[#0044B5] font-black text-xs uppercase tracking-widest mb-4 border-b border-slate-100 pb-2">
+            Historial de Actividades
+          </h3>
+          {history.length === 0 ? (
+            <p className="text-sm text-gray-500">Aún no tienes actividades registradas.</p>
+          ) : (
+            <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
+              {history.map((act, idx) => (
+                <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col gap-1">
+                  <div className="flex justify-between items-start">
+                    <strong className="text-[#1A2340] text-sm">{act.custom_activity_name || act.activity?.name || 'Actividad Registrada'}</strong>
+                    <span className="text-xs bg-blue-100 text-[#0044B5] px-2 py-0.5 rounded font-bold">
+                      {act.scheduled_date}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <span className="font-semibold text-gray-600">Lugar:</span> {act.location_name} &bull; <span className="font-semibold text-gray-600">Modalidad:</span> {act.activity_type}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                    {act.description}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <div className="pt-4 flex justify-end border-t border-[#D8E2F0]">
