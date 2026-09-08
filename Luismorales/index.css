@@ -1,0 +1,367 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SISTEMA DE DISEÑO INSTITUCIONAL — SOMOS COMUNIDAD
+   Guía de Uso de Marca · United Way Chihuahua
+   ============================================================
+   PALETA OFICIAL:
+   - Azul Institucional:  #0044B5
+   - Azul Oscuro:         #002D7A (sombras / sidebar)
+   - Dorado Institucional:#FFBA00 (reemplaza naranja)
+   - Blanco:              #FFFFFF (fondo área privada)
+   - Gris Claro:          #F4F6FA (superficies secundarias)
+   - Gris Texto:          #4A5568 (texto secundario)
+
+   TIPOGRAFÍA:
+   - Antonio Bold  → Titulares grandes (MAYÚSCULAS)
+   - Inter         → Cuerpo de texto y UI
+   ============================================================ */
+
+@theme {
+  /* Paleta oficial de marca */
+  --color-brand-blue:      #0044B5; /* Azul Institucional */
+  --color-brand-blue-dark: #002D7A; /* Azul Oscuro (sidebar/sombras) */
+  --color-brand-gold:      #FFBA00; /* Dorado Institucional */
+  --color-brand-gold-dark: #CC9400; /* Dorado oscuro (hover) */
+
+  /* Superficies — Área Privada (fondo blanco) */
+  --color-surface-white:   #FFFFFF;
+  --color-surface-light:   #F4F6FA;
+  --color-surface-card:    #EEF2FB;
+
+  /* Texto */
+  --color-text-primary:    #1A2340;
+  --color-text-secondary:  #4A5568;
+  --color-text-muted:      #9AA3B4;
+
+  /* Bordes */
+  --color-border:          #D8E2F0;
+  --color-border-blue:     rgba(0, 68, 181, 0.25);
+
+  /* Legado (LandingView pública permanece en dark mode) */
+  --color-primary:         #0044B5;
+  --color-primary-dark:    #002D7A;
+  --color-secondary:       #FFBA00;
+}
+
+/* ============================================================
+   BASE GLOBAL
+   ============================================================ */
+html {
+  font-size: 16px; /* Base por defecto */
+  overflow-x: hidden;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 15px; /* Un poco más pequeño para dar más aire (zoom out feel) */
+  }
+}
+
+body {
+  background-color: #FFFFFF;
+  color: var(--color-text-primary);
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   FUENTE ANTONIO — Titulares institucionales (MAYÚSCULAS)
+   Uso: clases .heading-brand y .font-antonio
+   ============================================================ */
+.font-antonio,
+.heading-brand {
+  font-family: 'Antonio', 'Impact', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   TOPBAR INSTITUCIONAL (#0044B5)
+   Combinación: Blanco sobre Azul + Dorado como acento
+   ============================================================ */
+.topbar-brand {
+  background-color: #0044B5;
+  color: #FFFFFF;
+}
+
+.topbar-brand .brand-accent {
+  color: #FFBA00;
+}
+
+/* ============================================================
+   SIDEBAR ADMINISTRADOR (Azul Oscuro #002D7A)
+   Combinación: Blanco sobre Azul Oscuro
+   ============================================================ */
+.sidebar-brand {
+  background-color: #002D7A;
+  color: #FFFFFF;
+}
+
+.sidebar-brand .nav-item-active {
+  background-color: #0044B5;
+  color: #FFFFFF;
+  border-left: 3px solid #FFBA00;
+}
+
+.sidebar-brand .nav-item {
+  color: rgba(255, 255, 255, 0.75);
+  transition: all 0.2s ease;
+}
+
+.sidebar-brand .nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   BOTONES INSTITUCIONALES
+   ============================================================ */
+
+/* Primario: Dorado + texto Azul (énfasis máximo) */
+.btn-brand-gold {
+  background-color: #FFBA00;
+  color: #0044B5;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  border: none;
+}
+.btn-brand-gold:hover {
+  background-color: #CC9400;
+  box-shadow: 0 4px 16px rgba(255, 186, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Secundario: Azul sólido + texto blanco */
+.btn-brand-blue {
+  background-color: #0044B5;
+  color: #FFFFFF;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  border: none;
+}
+.btn-brand-blue:hover {
+  background-color: #002D7A;
+  box-shadow: 0 4px 16px rgba(0, 68, 181, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Fantasma / Outlined Azul */
+.btn-outline-blue {
+  background-color: transparent;
+  color: #0044B5;
+  font-weight: 600;
+  border: 2px solid #0044B5;
+  transition: all 0.2s ease;
+}
+.btn-outline-blue:hover {
+  background-color: #0044B5;
+  color: #FFFFFF;
+}
+
+/* Alias semántico para modales */
+.btn-brand-outline {
+  background-color: transparent;
+  color: #0044B5;
+  font-weight: 600;
+  border: 2px solid #0044B5;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
+}
+.btn-brand-outline:hover {
+  background-color: #0044B5;
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   TARJETAS (Área privada — fondo blanco)
+   ============================================================ */
+.card-brand {
+  background-color: #FFFFFF;
+  border: 1px solid #D8E2F0;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 44, 122, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-brand:hover {
+  box-shadow: 0 6px 24px rgba(0, 68, 181, 0.12);
+  transform: translateY(-2px);
+}
+
+.card-brand-surface {
+  background-color: #F4F6FA;
+  border: 1px solid #D8E2F0;
+  border-radius: 1rem;
+}
+
+/* ============================================================
+   BADGE / ETIQUETAS
+   ============================================================ */
+.badge-gold {
+  background-color: rgba(255, 186, 0, 0.15);
+  color: #8A6400;
+  border: 1px solid rgba(255, 186, 0, 0.4);
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.badge-blue {
+  background-color: rgba(0, 68, 181, 0.1);
+  color: #0044B5;
+  border: 1px solid rgba(0, 68, 181, 0.3);
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* ============================================================
+   INPUTS — Área privada (fondo blanco)
+   ============================================================ */
+.input-brand {
+  background-color: #FFFFFF;
+  border: 1.5px solid #D8E2F0;
+  border-radius: 0.625rem;
+  color: #1A2340;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-brand:focus {
+  outline: none;
+  border-color: #0044B5;
+  box-shadow: 0 0 0 3px rgba(0, 68, 181, 0.12);
+}
+.input-brand::placeholder {
+  color: #9AA3B4;
+}
+
+/* ============================================================
+   SCROLLBAR PERSONALIZADO
+   ============================================================ */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #F4F6FA;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #0044B5;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #FFBA00;
+}
+
+/* ============================================================
+   BARRA DE PROGRESO INSTITUCIONAL
+   ============================================================ */
+.progress-brand-track {
+  background-color: #EEF2FB;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-brand-fill {
+  background: linear-gradient(90deg, #0044B5, #FFBA00);
+  border-radius: 999px;
+  transition: width 1s ease;
+}
+
+/* ============================================================
+   DIVISOR DECORATIVO DORADO
+   ============================================================ */
+.divider-gold {
+  display: inline-block;
+  width: 3px;
+  height: 1.5rem;
+  background-color: #FFBA00;
+  border-radius: 999px;
+  margin-right: 0.75rem;
+  vertical-align: middle;
+}
+
+/* ============================================================
+   ANIMACIONES GLOBALES
+   ============================================================ */
+@keyframes slow-zoom {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.animate-slow-zoom {
+  animation: slow-zoom 20s infinite ease-in-out;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.8; }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out forwards;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s infinite ease-in-out;
+}
+
+/* ============================================================
+   IMPRESIÓN (MetricsDashboardView)
+   ============================================================ */
+@media screen {
+  .only-print { display: none; }
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print  { display: none !important; }
+  .only-print {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 1.5cm !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

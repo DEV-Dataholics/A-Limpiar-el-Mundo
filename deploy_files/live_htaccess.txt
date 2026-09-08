@@ -1,0 +1,19 @@
+# Somos Comunidad - Root .htaccess (Site5 Production)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pass Authorization header through to PHP
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Route /api/* to CodeIgniter — preserve full path as PATH_INFO
+    RewriteRule ^api/(.*)$ api/public/index.php/$1 [L,QSA]
+
+    # Also handle bare /api with no trailing path
+    RewriteRule ^api$ api/public/index.php [L,QSA]
+
+    # React SPA fallback — serve index.html for all non-file, non-dir routes
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>

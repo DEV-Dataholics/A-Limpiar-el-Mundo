@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+vendor/
+api/vendor/
+
+# Build outputs
+dist/
+frontend/dist/
+
+# Framework writable & cache dirs
+api/writable/cache/*
+api/writable/debugbar/*
+api/writable/logs/*
+api/writable/session/*
+api/writable/uploads/*
+!api/writable/cache/index.html
+!api/writable/debugbar/index.html
+!api/writable/logs/index.html
+!api/writable/session/index.html
+!api/writable/uploads/index.html
+
+# Environment & Secrets
+.env
+api/.env
+*.env
+*env.txt
+
+# Archive / Large zip files
+*.zip
+upload_api.zip
+vendor.zip
+upload_frontend.zip
+composer_autoload.zip
+firebase.zip
+
+# Logs & Temp files
+*.log
+live_log.txt
+remote_log*.txt
+remote_error_log.txt
+tmp_log*.log
+temp_api_backup/
+tmp_remote_compare/
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

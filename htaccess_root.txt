@@ -1,0 +1,15 @@
+﻿# Somos Comunidad - Root .htaccess
+# Route React SPA
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Compatibility for live stack: one "api" segment is consumed upstream.
+    # Force /api/foo to CI path /api/api/foo so backend resolves expected route.
+    RewriteCond %{REQUEST_URI} ^/api(/.*)?$
+    RewriteRule ^api/?(.*)$ api/public/index.php/api/api/$1 [L,QSA]
+
+    # React SPA fallback - all other routes serve index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>

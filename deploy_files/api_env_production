@@ -1,0 +1,14 @@
+CI_ENVIRONMENT = production
+
+app.baseURL = 'https://somoscomunidad.dataholics.com.mx/'
+
+database.default.hostname = localhost
+database.default.database = noodluis_somoscomunidad
+database.default.username = noodluis_DEV_SC
+database.default.password = VX^uU~Tn7*w=
+database.default.DBDriver = MySQLi
+database.default.DBPrefix =
+database.default.port = 3306
+
+# Required for Auth::login JWT token signing
+JWT_SECRET = change_this_to_a_long_random_secret
