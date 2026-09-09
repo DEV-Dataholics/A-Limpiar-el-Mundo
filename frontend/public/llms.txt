@@ -1,0 +1,42 @@
+# A Limpiar el Mundo 2026 — United Way Chihuahua (Fondo Unido)
+
+> Plataforma oficial de voluntariado comunitario, registro de actividades y cuantificación de impacto ambiental de la campaña anual "A Limpiar el Mundo 2026", organizada por United Way Chihuahua (Fondo Unido Chihuahua).
+
+## Organización Convocante
+- **Nombre**: United Way Chihuahua / Fondo Unido Chihuahua
+- **Naturaleza**: Organización no gubernamental sin fines de lucro (I.A.P. / A.C.), miembro oficial de la red global United Way Worldwide.
+- **Aniversario**: Conmemorando 35 años de impacto comunitario en el estado de Chihuahua, México (1991 – 2026).
+- **Misión**: Movilizar a las comunidades a la acción para que todos puedan prosperar, articulando esfuerzos entre empresas, organizaciones de la sociedad civil, escuelas y ciudadanía.
+- **Símbolo institucional**: "Circle of Hope" (Círculo de Esperanza), diseñado originalmente por Saul Bass en 1972 y actualizado en 2024.
+- **Sede**: Chihuahua, Chihuahua, México.
+- **Sitio web oficial**: https://unitedwaychi.org/
+
+## Campaña: A Limpiar el Mundo 2026
+- **Propósito**: Convocatoria anual de voluntariado para la limpieza, recuperación, dignificación y reforestación de espacios públicos en Chihuahua, promoviendo la participación ciudadana, el trabajo en equipo y el cuidado del medio ambiente.
+- **Causa central**: Medioambiental (Recuperación de espacios públicos, áreas verdes y conservación, cultura de manejo responsable de residuos).
+- **Hashtag oficial**: `#AlimpiarelmundoUWCH`
+- **Costo de participación**: 100% Gratuito y de acceso público.
+- **Quiénes pueden participar**: Empresas, maquiladoras, PyMEs, escuelas, universidades, comités vecinales y familias.
+
+## 11 Tipos de Espacios Públicos Autorizados para Registro
+1. Parques públicos
+2. Áreas verdes públicas
+3. Plazas públicas
+4. Camellones
+5. Banquetas y calles de la colonia
+6. Alrededores de escuelas
+7. Canchas y espacios deportivos
+8. Senderos y ciclovías
+9. Paraderos de transporte público
+10. Áreas recreativas
+11. Alrededores de centros comunitarios
+
+## Mecánica de Participación y Registro
+1. **Acceso**: Los voluntarios y brigadas corporativas o comunitarias acceden a la plataforma web.
+2. **Formulario**: Registran los datos de su actividad (nombre de brigada/empresa, tipo de espacio seleccionado, fecha, número de voluntarios y horas dedicadas).
+3. **Evidencia**: Adjuntan fotografía como evidencia de la jornada de limpieza o reforestación.
+4. **Métricas**: El impacto se consolida en tiempo real en el tablero público de métricas (voluntarios totales, actividades registradas y horas de impacto comunitario acumuladas).
+5. **Difusión**: Comparten la experiencia en redes sociales con `#AlimpiarelmundoUWCH`.
+
+## Información Complementaria
+- Para contexto institucional detallado, preguntas frecuentes completas y lineamientos de marca, consulta: `/llms-full.txt`

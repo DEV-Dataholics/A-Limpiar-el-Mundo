@@ -43,16 +43,16 @@ export default function DashboardView() {
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-4 group transition-transform hover:scale-105">
               <img
-                src="/image.png"
-                alt="United Way"
+                src="/logo-uwch-35-white-color.png"
+                alt="United Way Chihuahua 35 Aniversario"
                 className="h-10 object-contain"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
               <div className="h-10 w-[2px] bg-[#FFBA00] mx-1 hidden sm:block"></div>
               <img
-                src="/somoscomunidad-logo.png"
-                alt="Somos Comunidad"
-                className="h-8 object-contain brightness-0 invert"
+                src="/logo-a-limpiar-el-mundo.png"
+                alt="A Limpiar el Mundo 2026"
+                className="h-9 object-contain bg-white px-2 py-1 rounded-xl shadow-sm"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
             </Link>

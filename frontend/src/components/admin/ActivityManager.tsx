@@ -30,7 +30,7 @@ export default function ActivityManager({ token }: { token: string }) {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
-      setActivities(data);
+      setActivities(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching activities", error);
     } finally {

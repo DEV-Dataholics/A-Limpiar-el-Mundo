@@ -1,0 +1,37 @@
+# Robots.txt — A Limpiar el Mundo 2026 | United Way Chihuahua
+# Permite el rastreo para motores de búsqueda tradicionales y modelos de lenguaje (LLMs / AI Search Engines)
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Rastreadores de Inteligencia Artificial y Motores Generativos (GEO / LLMO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# Archivos de contexto para IA y Mapa de Sitio
+# LLMs Context: /llms.txt
+# LLMs Full Context: /llms-full.txt
+Sitemap: https://alimpiarelmundo.org.mx/sitemap.xml

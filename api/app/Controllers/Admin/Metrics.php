@@ -27,9 +27,7 @@ class Metrics extends ResourceController
 
             $builder = $db->table('activities')->where('deleted_at', null)->where('status', 'approved');
             if ($month) $builder->where('MONTH(registration_date)', $month);
-            $totalHours = clone $builder;
-            $totalHours = clone $builder; // just safely reuse
-            $hoursQuery = $builder->selectSum('total_volunteers * individual_hours_duration', 'value')->get()->getRow()->value ?? 0;
+            $hoursQuery = $builder->select('COALESCE(SUM(total_volunteers * individual_hours_duration), 0) AS value', false)->get()->getRow()->value ?? 0;
 
             $builder = $db->table('activities')->where('deleted_at', null)->where('status', 'pending');
             if ($month) $builder->where('MONTH(registration_date)', $month);
@@ -38,7 +36,9 @@ class Metrics extends ResourceController
             $general = [
                 'total_volunteers'    => (int) $totalVolunteers,
                 'total_actions'       => $totalActions,
+                'total_registrations' => $totalActions,
                 'total_hours'         => (float) $hoursQuery,
+                'total_beneficiaries' => 0,
                 'pending_approvals'   => $pendingApprovals,
             ];
 
@@ -67,7 +67,7 @@ class Metrics extends ResourceController
             if ($month) {
                 $builder->where('MONTH(a.registration_date)', $month);
             }
-            $locations = $builder->groupBy('a.plant_id, a.division_id')
+            $locations = $builder->groupBy(['a.plant_id', 'a.division_id'])
                 ->orderBy('total_activities', 'DESC')
                 ->get()
                 ->getResultArray();
@@ -77,7 +77,9 @@ class Metrics extends ResourceController
                 'data'   => [
                     'general'         => $general,
                     'top_corporates'  => $topCorporates,
+                    'institutional'   => $topCorporates,
                     'locations'       => $locations,
+                    'community_count' => 0,
                 ]
             ]);
         } catch (\Throwable $e) {

@@ -50,7 +50,7 @@ export default function ImpactFeedGrid() {
                 {item.activity_name || 'Acción Ciudadana'}
               </p>
               <p className="text-xs text-white font-medium line-clamp-3 leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity delay-200">
-                {item.description || 'Participación verificada en Somos Comunidad.'}
+                {item.description || 'Participación verificada en A Limpiar el Mundo.'}
               </p>
               <div className="flex items-center justify-between pt-4 border-t border-white/20">
                 <span className="text-[10px] text-white/70 font-bold uppercase tracking-tighter">

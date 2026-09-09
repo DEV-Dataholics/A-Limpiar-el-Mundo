@@ -10,8 +10,8 @@ interface MetricsData {
     total_beneficiaries: number;
     pending_approvals: number;
   };
-  institutional: any[];
-  locations: any[];
+  institutional: Record<string, unknown>[];
+  locations: Record<string, unknown>[];
   community_count: number;
 }
 
@@ -19,26 +19,33 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
   const [data, setData] = useState<MetricsData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchMetrics = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const headers: any = {};
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      
-      const response = await fetch(`${API_URL}/api/public-metrics`, { headers });
-      const res = await response.json();
-      if (response.ok) {
-        setData(res.data);
-      }
-    } catch (e) {
-      console.error("Error loading metrics", e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+    const fetchMetrics = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const headers: Record<string, string> = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        
+        const response = await fetch(`${API_URL}/api/public-metrics`, { headers });
+        const res = await response.json();
+        if (response.ok && isMounted) {
+          setData(res.data);
+        }
+      } catch (e) {
+        console.error("Error loading metrics", e);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchMetrics();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handlePrint = () => {
@@ -81,7 +88,7 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
             <p className="text-6xl font-antonio text-[#0044B5] mb-1 group-hover/stat:text-[#FFBA00] transition-colors">
               {data.general.total_actions.toLocaleString()}
             </p>
-            <p className="text-xs text-[#4A5568] uppercase font-bold tracking-[0.2em]">Acciones</p>
+            <p className="text-xs text-[#4A5568] uppercase font-bold tracking-[0.2em]">Actividades</p>
           </div>
           
           <div className="relative group/stat flex flex-col items-center text-center md:items-start md:text-left pl-0 md:pl-6 border-l-0 md:border-l-4 border-[#002D7A]">
@@ -107,14 +114,14 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
         <div className="flex justify-between items-center border-b-8 border-[#FFBA00] pb-8 mb-10">
           <div className="flex flex-col">
             <h1 className="font-antonio text-5xl font-black text-[#0044B5] leading-none mb-2">REPORTE DE IMPACTO</h1>
-            <p className="font-antonio text-xl font-bold text-[#FFBA00] tracking-[0.4em]">SOMOS COMUNIDAD</p>
+            <p className="font-antonio text-xl font-bold text-[#FFBA00] tracking-[0.4em]">A LIMPIAR EL MUNDO</p>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-right border-r-2 pr-6 border-[#D8E2F0]">
               <p className="text-[10px] font-black text-[#4A5568] uppercase tracking-widest">Fecha de Emisión</p>
               <p className="text-sm font-bold">{new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
             </div>
-            <img src="/somoscomunidad-logo.png" alt="Logo" className="h-16 w-auto bg-[#0044B5] p-2 rounded-lg" />
+            <img src="/logo-a-limpiar-el-mundo.png" alt="Logo A Limpiar el Mundo" className="h-16 w-auto bg-[#0044B5] p-2 rounded-lg object-contain" />
           </div>
         </div>
 
@@ -127,7 +134,7 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
                 <span className="text-2xl font-antonio text-[#0044B5]">{data.general.total_volunteers}</span>
               </div>
               <div className="flex justify-between items-end border-b-2 border-[#0044B5]/10 pb-2">
-                <span className="text-sm text-slate-600 font-bold uppercase">Acciones:</span>
+                <span className="text-sm text-slate-600 font-bold uppercase">Actividades:</span>
                 <span className="text-2xl font-antonio text-[#0044B5]">{data.general.total_actions}</span>
               </div>
               <div className="flex justify-between items-end border-b-2 border-[#0044B5]/10 pb-2">
@@ -153,7 +160,7 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
                 <span className="font-antonio text-xl">{data.community_count}</span>
               </div>
               <div className="pt-6 mt-6 border-t border-white/20">
-                <p className="text-[10px] opacity-60 italic leading-relaxed">Este reporte certifica el impacto social generado a través de la plataforma Somos Comunidad impulsada por United Way Chihuahua.</p>
+                <p className="text-[10px] opacity-60 italic leading-relaxed">Este reporte certifica el impacto social y ambiental generado a través de la campaña A Limpiar el Mundo impulsada por United Way Chihuahua.</p>
               </div>
             </div>
           </div>
@@ -198,7 +205,7 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
           </div>
           <div className="mt-12 flex items-center justify-center gap-4">
              <div className="h-[1px] flex-1 bg-[#D8E2F0]"></div>
-             <p className="font-antonio text-[10px] text-[#0044B5] font-black uppercase tracking-widest px-4">Somos Comunidad Â© 2026</p>
+             <p className="font-antonio text-[10px] text-[#0044B5] font-black uppercase tracking-widest px-4">A Limpiar el Mundo · United Way Chihuahua © 2026</p>
              <div className="h-[1px] flex-1 bg-[#D8E2F0]"></div>
           </div>
         </div>

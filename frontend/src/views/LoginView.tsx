@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
+import Navbar from '../components/Navbar';
+import { BotanicalCactus, BotanicalSprout } from '../components/BotanicalPlant';
 
 export default function LoginView() {
   const [email, setEmail] = useState('');
@@ -10,6 +12,19 @@ export default function LoginView() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Estados de movimiento para efecto 3D en plantas y cactus
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setMousePos({ x, y });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,36 +52,69 @@ export default function LoginView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] flex flex-col">
+    <div className="min-h-screen bg-[#F4F6FA] flex flex-col selection:bg-[#FFBA00]/30 selection:text-[#0044B5]">
 
-      {/* ── TOPBAR INSTITUCIONAL ── */}
-      <header className="bg-[#0044B5] h-14 flex items-center px-6 shadow-md">
-        <div className="flex items-center gap-3">
-          <img
-            src="/somoscomunidad-logo.png"
-            alt="Somos Comunidad"
-            className="h-8 object-contain"
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      {/* ── TOPBAR INSTITUCIONAL EXACTO ── */}
+      <Navbar />
+
+      {/* ── FORMULARIO CON FONDO BOTÁNICO Y CACTUS ── */}
+      <div 
+        className="flex-1 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden"
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setMousePos({ x: 0, y: 0 });
+        }}
+      >
+        {/* Orbes bio-ambientales suaves de fondo */}
+        <div 
+          className="absolute top-12 right-1/4 w-96 h-96 bg-[#FFBA00]/15 rounded-full blur-3xl pointer-events-none transition-transform duration-700"
+          style={{ transform: `translate3d(${mousePos.x * 25}px, ${mousePos.y * 20}px, 0)` }}
+        />
+        <div 
+          className="absolute bottom-12 left-1/4 w-96 h-96 bg-[#009464]/10 rounded-full blur-3xl pointer-events-none transition-transform duration-700"
+          style={{ transform: `translate3d(${-mousePos.x * 20}px, ${-mousePos.y * 15}px, 0)` }}
+        />
+
+        {/* Contenedor relativo de tarjeta y elementos botánicos */}
+        <div ref={cardRef} className="relative w-full max-w-md my-6" style={{ perspective: 1200 }}>
+          
+          {/* Cactus Saguaro Vectorizado sobresaliendo por la derecha superior */}
+          <BotanicalCactus
+            mousePos={mousePos}
+            isHovered={isHovered}
+            className="absolute -top-24 -right-6 sm:-top-28 sm:-right-8 w-52 sm:w-64 h-64 sm:h-80 z-0"
           />
-          <span className="font-antonio text-white text-base uppercase tracking-wide">
-            Somos Comunidad
-          </span>
-        </div>
-      </header>
 
-      {/* ── FORMULARIO ── */}
-      <main className="flex-1 grid place-items-center p-4 sm:p-6">
-        <div className="bg-white rounded-2xl shadow-xl border border-[#D8E2F0] w-full max-w-md overflow-hidden">
+          {/* Brote botánico sobresaliendo por la esquina inferior izquierda */}
+          <BotanicalSprout
+            mousePos={mousePos}
+            isHovered={isHovered}
+            className="absolute -bottom-8 -left-8 sm:-bottom-10 sm:-left-10 w-32 sm:w-40 h-32 sm:h-40 z-0"
+          />
 
-          {/* Banda azul superior */}
-          <div className="bg-[#0044B5] px-8 py-6 text-center">
-            <h1 className="font-antonio text-white text-2xl uppercase">
-              Iniciar Sesión
-            </h1>
-            <p className="text-white/70 text-sm mt-1">
-              Accede a tu cuenta de voluntario
-            </p>
-          </div>
+          {/* Tarjeta de Inicio de Sesión */}
+          <div className="relative z-10 bg-white rounded-3xl shadow-[0_24px_60px_rgba(0,45,122,0.18)] border border-[#D8E2F0] overflow-hidden">
+
+            {/* Banda azul institucional */}
+            <div className="bg-[#0044B5] px-8 py-7 text-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-[#FFBA00]/10 rounded-full blur-xl pointer-events-none"></div>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#009464] animate-pulse"></span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+                  Acceso a Plataforma
+                </span>
+              </div>
+
+              <h1 className="font-antonio text-white text-3xl uppercase tracking-wide">
+                Iniciar Sesión
+              </h1>
+              <p className="text-white/80 text-sm mt-1.5 font-medium">
+                A Limpiar el Mundo 2026 · United Way Chihuahua
+              </p>
+            </div>
 
           <div className="px-8 py-8">
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -125,11 +173,12 @@ export default function LoginView() {
             </p>
           </div>
         </div>
-      </main>
+      </div>
+    </div>
 
       {/* ── FOOTER MÍNIMO ── */}
-      <footer className="text-center py-4 text-xs text-[#9AA3B4]">
-        © 2025 United Way Chihuahua · Somos Comunidad
+      <footer className="text-center py-6 text-xs text-slate-500 font-medium border-t border-slate-200/60 bg-white">
+        © {new Date().getFullYear()} United Way Chihuahua · A Limpiar el Mundo 2026
       </footer>
     </div>
   );

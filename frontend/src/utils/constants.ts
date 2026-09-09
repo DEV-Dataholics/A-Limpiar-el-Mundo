@@ -1,5 +1,5 @@
 /**
- * constants.ts — Catálogos y constantes globales del proyecto Somos Comunidad
+ * constants.ts — Catálogos y constantes globales del proyecto A Limpiar el Mundo (United Way Chihuahua)
  * Fuente: Consolidación de LearHQ.csv + Empresas.csv (Ajuste #12/#15)
  */
 

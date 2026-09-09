@@ -48,3 +48,7 @@ tmp_remote_compare/
 Thumbs.db
 .vscode/
 .idea/
+
+# Antigravity & Agent Governance
+.agents/
+.agent/

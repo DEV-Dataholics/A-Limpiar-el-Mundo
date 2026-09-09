@@ -111,15 +111,15 @@ export default function AdminDashboardView() {
             
             <Link to="/" className="flex items-center gap-4 group transition-transform hover:scale-105">
               <img
-                src="/image.png"
-                alt="United Way Chihuahua"
+                src="/logo-uwch-35-white-color.png"
+                alt="United Way Chihuahua 35 Años"
                 className="h-10 object-contain"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
               <div className="h-10 w-[2px] bg-[#FFBA00] mx-1 hidden sm:block"></div>
               <img
-                src="/somoscomunidad-logo.png"
-                alt="Somos Comunidad"
+                src="/logo-a-limpiar-el-mundo.png"
+                alt="A Limpiar el Mundo 2026"
                 className="h-8 object-contain brightness-0 invert"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
