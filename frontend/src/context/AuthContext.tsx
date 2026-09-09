@@ -11,6 +11,11 @@ type User = {
   state?: string;
   municipality?: string;
   phone?: string;
+  locality?: string;
+  plant?: string;
+  division?: string;
+  plant_id?: number | string;
+  division_id?: number | string;
 };
 
 type AuthContextType = {

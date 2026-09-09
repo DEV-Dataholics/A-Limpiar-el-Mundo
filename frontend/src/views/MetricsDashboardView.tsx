@@ -11,7 +11,7 @@ interface MetricsData {
     pending_approvals: number;
   };
   institutional: Record<string, unknown>[];
-  locations: Record<string, unknown>[];
+  locations: Array<{ municipality?: string; plant_name?: string; division_name?: string; total_activities?: number; count?: number | string }>;
   community_count: number;
 }
 

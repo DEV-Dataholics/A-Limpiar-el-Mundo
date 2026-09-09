@@ -1,25 +1,20 @@
-import { useEffect, useState } from 'react';
 import { useRegistrationForm } from '../hooks/useRegistrationForm';
 import { useAuth } from '../context/AuthContext';
 import LocationSelector from './LocationSelector';
 import PredictiveCompanySelector from './PredictiveCompanySelector';
-import { API_URL } from '../config';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 
 export default function DynamicRegistrationForm() {
   const { user } = useAuth();
-  const [catalog, setCatalog] = useState<any[]>([]);
   const {
     legalConsent, setLegalConsent,
     loading, error,
-    activityId, setActivityId,
     scheduledDate, setScheduledDate,
     volunteerCount, setVolunteerCount,
     description, setDescription,
     customActivityName, setCustomActivityName,
-    activityType, setActivityType,
     groupName, setGroupName,
     locationName, setLocationName,
     state, setState,
@@ -29,27 +24,12 @@ export default function DynamicRegistrationForm() {
     testimonials, setTestimonials,
     evidenceLinks, setEvidenceLinks,
     accompaniedByFuch, setAccompaniedByFuch,
-    corporateId, setCorporateId,
-    plantId, setPlantId,
-    divisionId, setDivisionId,
+    setCorporateId,
+    setPlantId,
+    setDivisionId,
     canSubmit,
     handleSubmit
   } = useRegistrationForm();
-
-  // Carga de catálogo real
-  useEffect(() => {
-    fetch(`${API_URL}/api/activities`)
-      .then(res => res.json())
-      .then(data => {
-        // CodeIgniter respond() puede devolver data: [] o el array directo
-        const items = Array.isArray(data) ? data : (data.data || []);
-        setCatalog(Array.isArray(items) ? items : []);
-      })
-      .catch(err => {
-        console.error("Error loading catalog:", err);
-        setCatalog([]);
-      });
-  }, []);
 
   // Wrapper para inyectar user_id en el submit
   const onSubmit = (e: React.FormEvent) => {
@@ -294,7 +274,7 @@ export default function DynamicRegistrationForm() {
 
           <button 
             type="submit" 
-            disabled={!canSubmit() || loading || (activityType === 'Institucional' && !activityId)}
+            disabled={!canSubmit() || loading}
             className="md:col-span-2 w-full bg-[#0044B5] hover:bg-[#002D7A] text-white py-4 rounded-xl text-lg font-antonio uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:shadow-none"
           >
             {loading ? (

@@ -6,7 +6,6 @@ import { BotanicalPlant, BotanicalSprout, BotanicalCactus } from '../components/
 
 export default function LandingView() {
   // URLs de assets institucionales oficiales
-  const uwchLogo = '/logo-uwch-35.png';
   const alemLogo = '/logo-a-limpiar-el-mundo.png';
 
   // Fotografías oficiales de campaña (Docs A Limpiar el Mundo 2025)
