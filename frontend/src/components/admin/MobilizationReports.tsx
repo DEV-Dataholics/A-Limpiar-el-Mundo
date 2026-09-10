@@ -1,5 +1,5 @@
 import { API_URL } from '../../config';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -273,10 +273,52 @@ export default function MobilizationReports() {
   const [error, setError] = useState('');
   const [selectedRecord, setSelectedRecord] = useState<MobilizationRecord | null>(null);
 
+  // Estados de filtros dinámicos
+  const [filterActivity, setFilterActivity] = useState('');
+  const [filterCompany, setFilterCompany] = useState('');
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
+
   const topScrollRef = useRef<HTMLDivElement>(null);
   const tableScrollRef = useRef<HTMLDivElement>(null);
   const [scrollWidth, setScrollWidth] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
+
+  // Filtrado reactivo en memoria
+  const filteredData = useMemo(() => {
+    return data.filter(row => {
+      // 1. Filtro por actividad
+      if (filterActivity.trim()) {
+        const query = filterActivity.toLowerCase().trim();
+        const actName = (row.custom_activity_name || row.catalog_activity_name || '').toLowerCase();
+        if (!actName.includes(query)) return false;
+      }
+      // 2. Filtro por empresa / organizacion / responsable
+      if (filterCompany.trim()) {
+        const query = filterCompany.toLowerCase().trim();
+        const comp = (row.user_organization || row.group_name || `${row.user_name} ${row.user_last_name}`).toLowerCase();
+        if (!comp.includes(query)) return false;
+      }
+      // 3. Filtro por rango de fechas
+      const rawDate = row.execution_date || row.scheduled_date || row.created_at;
+      if (filterStartDate) {
+        if (!rawDate || rawDate.slice(0, 10) < filterStartDate) return false;
+      }
+      if (filterEndDate) {
+        if (!rawDate || rawDate.slice(0, 10) > filterEndDate) return false;
+      }
+      return true;
+    });
+  }, [data, filterActivity, filterCompany, filterStartDate, filterEndDate]);
+
+  const hasActiveFilters = Boolean(filterActivity || filterCompany || filterStartDate || filterEndDate);
+
+  const clearFilters = () => {
+    setFilterActivity('');
+    setFilterCompany('');
+    setFilterStartDate('');
+    setFilterEndDate('');
+  };
 
   const fetchReports = useCallback(async (type: string) => {
     setLoading(true);
@@ -384,7 +426,7 @@ export default function MobilizationReports() {
             <p className="text-white/70 text-sm mt-0.5">Voluntariado ciudadano registrado en la plataforma</p>
           </div>
           <button
-            onClick={() => downloadCSV(data, activeTab)}
+            onClick={() => downloadCSV(filteredData.length ? filteredData : data, activeTab)}
             disabled={!data.length}
             className="btn-brand-gold text-sm px-5 py-2.5 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
           >
@@ -412,6 +454,92 @@ export default function MobilizationReports() {
               )}
             </button>
           ))}
+        </div>
+
+        {/* ── Barra de Filtros Dinámicos (TKT-UW-003) ── */}
+        <div className="bg-[#F8FAFC] border-b border-slate-200 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Filtro por Actividad */}
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Buscar por Actividad
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Ej. Reforestación, Limpieza..."
+                  value={filterActivity}
+                  onChange={e => setFilterActivity(e.target.value)}
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#0044B5] bg-white transition-colors"
+                />
+                <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Filtro por Empresa */}
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Buscar por Empresa / Reporta
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Ej. Aptiv, Lear, Brigada..."
+                  value={filterCompany}
+                  onChange={e => setFilterCompany(e.target.value)}
+                  className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#0044B5] bg-white transition-colors"
+                />
+                <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Filtro Rango: Fecha Desde */}
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Fecha Desde
+              </label>
+              <input
+                type="date"
+                value={filterStartDate}
+                onChange={e => setFilterStartDate(e.target.value)}
+                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#0044B5] bg-white transition-colors"
+              />
+            </div>
+
+            {/* Filtro Rango: Fecha Hasta */}
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Fecha Hasta
+              </label>
+              <input
+                type="date"
+                value={filterEndDate}
+                onChange={e => setFilterEndDate(e.target.value)}
+                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#0044B5] bg-white transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Sub-barra de resumen y limpiar */}
+          <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-200 text-xs">
+            <span className="text-slate-600 font-medium">
+              Mostrando <strong className="text-[#0044B5]">{filteredData.length}</strong> de {data.length} registros
+              {hasActiveFilters && <span className="text-amber-600 font-semibold ml-1.5">(Filtros aplicados)</span>}
+            </span>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-xs font-semibold text-red-600 hover:text-red-800 hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <span>&times;</span> Limpiar filtros
+              </button>
+            )}
+          </div>
         </div>
 
         {/* ── Barra Superior de Desplazamiento Sincronizada ── */}
@@ -455,8 +583,8 @@ export default function MobilizationReports() {
           </div>
         )}
 
-        {/* Contenido de Tabla */}
-        <div ref={tableScrollRef} className="overflow-x-auto custom-scrollbar">
+        {/* Contenido de Tabla con Sticky Header Confinado */}
+        <div ref={tableScrollRef} className="overflow-auto max-h-[620px] custom-scrollbar relative border-b border-slate-200">
           {loading ? (
             <div className="flex items-center justify-center py-16 text-slate-400">
               <div className="w-6 h-6 border-2 border-[#0044B5] border-t-transparent rounded-full animate-spin mr-3"></div>
@@ -469,9 +597,21 @@ export default function MobilizationReports() {
               <p className="text-4xl mb-3">📭</p>
               <p className="font-semibold">Sin registros para este tipo de movilización.</p>
             </div>
+          ) : filteredData.length === 0 ? (
+            <div className="text-center py-14 text-slate-400">
+              <p className="text-4xl mb-3">🔍</p>
+              <p className="font-semibold">No se encontraron registros que coincidan con los filtros aplicados.</p>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-3 text-xs text-[#0044B5] font-bold hover:underline"
+              >
+                Restablecer filtros
+              </button>
+            </div>
           ) : (
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead className="bg-slate-100/95 backdrop-blur-sm border-b border-slate-300 sticky top-0 z-20 shadow-xs">
                 <tr>
                   {[
                     activeTab === 'Corporativa' ? 'Empresa' : 'Voluntario',
@@ -479,12 +619,12 @@ export default function MobilizationReports() {
                     activeTab === 'Corporativa' ? 'Enlace / Responsable' : 'Organización',
                     'Lugar', 'Fecha', 'Horas', 'Beneficiarios', 'Estatus', ''
                   ].map((h, i) => (
-                    <th key={`${h}-${i}`} className="px-4 py-3 text-xs font-black text-slate-500 uppercase tracking-wide whitespace-nowrap">{h}</th>
+                    <th key={`${h}-${i}`} className="px-4 py-3 text-xs font-black text-slate-600 uppercase tracking-wide whitespace-nowrap bg-slate-100">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {data.map((row, i) => {
+                {filteredData.map((row, i) => {
                   const st = STATUS_BADGE[row.status] ?? { cls: 'bg-slate-100 text-slate-500 border-slate-200', label: row.status };
                   return (
                     <tr key={row.id} className={`border-b border-slate-100 hover:bg-blue-50/40 transition-colors ${i % 2 === 0 ? '' : 'bg-slate-50/50'}`}>

@@ -460,9 +460,9 @@ export default function AdminDashboardView() {
                           No hay voluntarios registrados en esta causa.
                         </div>
                       ) : (
-                        <div className="overflow-x-auto rounded-xl border border-[#D8E2F0]">
-                          <table className="w-full text-left text-sm">
-                            <thead className="bg-[#F4F6FA] text-[#4A5568] text-xs uppercase tracking-wider">
+                        <div className="overflow-auto max-h-[480px] rounded-xl border border-[#D8E2F0] custom-scrollbar">
+                          <table className="w-full text-left text-sm border-collapse">
+                            <thead className="bg-[#F4F6FA] text-[#4A5568] text-xs uppercase tracking-wider sticky top-0 z-10 shadow-xs">
                               <tr>
                                 <th className="px-4 py-3 font-bold">Empresa / Quien Reporta</th>
                                 <th className="px-4 py-3 font-bold">Modalidad</th>
