@@ -29,8 +29,11 @@ type MetricData = {
     status: string;
   }>;
   locations: Array<{
-    municipality: string;
-    count: number;
+    plant_name?: string;
+    division_name?: string;
+    total_activities?: number;
+    municipality?: string;
+    count?: number;
   }>;
   community_count: number;
   top_corporates?: Array<{ name: string; hours: number; count: number }>;
@@ -49,18 +52,22 @@ export default function AdminDashboardView() {
   const { user, token, isAdmin, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<NavTab>('metrics');
   const [metrics, setMetrics] = useState<MetricData | null>(null);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('');
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const [activityUsers, setActivityUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (isAdmin) fetchMetrics();
+    if (isAdmin) fetchMetrics(selectedPeriod);
   }, [isAdmin, activeTab]);
 
-  const fetchMetrics = async () => {
+  const fetchMetrics = async (periodMonth = selectedPeriod) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/metrics`, {
+      const url = periodMonth
+        ? `${API_BASE_URL}/api/admin/metrics?month=${encodeURIComponent(periodMonth)}`
+        : `${API_BASE_URL}/api/admin/metrics`;
+      const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -204,15 +211,46 @@ export default function AdminDashboardView() {
           {activeTab === 'metrics' && (
             <div className="space-y-8 animate-fade-in">
 
-              {/* Encabezado de sección */}
-              <div>
-                <h2 className="font-antonio text-3xl text-[#0044B5] uppercase flex items-center gap-3">
-                  <span className="divider-gold" />
-                  Resumen de Impacto
-                </h2>
-                <p className="text-[#4A5568] mt-1">
-                  Monitoreo de causas, voluntarios e indicadores de impacto.
-                </p>
+              {/* Encabezado de sección con selector de periodo mensual (TKT-UW-004) */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="font-antonio text-3xl text-[#0044B5] uppercase flex items-center gap-3">
+                    <span className="divider-gold" />
+                    Resumen de Impacto
+                  </h2>
+                  <p className="text-[#4A5568] mt-1">
+                    Monitoreo de causas, voluntarios e indicadores de impacto.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-white px-4 py-2.5 rounded-2xl border border-[#D8E2F0] shadow-xs self-start sm:self-auto">
+                  <span className="text-xs font-bold text-[#0044B5] uppercase tracking-wider whitespace-nowrap flex items-center gap-1.5">
+                    <span>📅</span> Periodo:
+                  </span>
+                  <select
+                    value={selectedPeriod}
+                    onChange={(e) => {
+                      const newMonth = e.target.value;
+                      setSelectedPeriod(newMonth);
+                      fetchMetrics(newMonth);
+                    }}
+                    className="text-xs font-semibold text-slate-700 bg-transparent border-0 focus:outline-none cursor-pointer pr-2"
+                  >
+                    <option value="">Acumulado General (Todo el Año)</option>
+                    <option value="09">Septiembre (Mes Oficial de Campaña)</option>
+                    <option value="08">Agosto</option>
+                    <option value="07">Julio</option>
+                    <option value="06">Junio</option>
+                    <option value="05">Mayo</option>
+                    <option value="04">Abril</option>
+                    <option value="03">Marzo</option>
+                    <option value="02">Febrero</option>
+                    <option value="01">Enero</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                  </select>
+                </div>
               </div>
 
               {/* Grid de métricas generales */}
@@ -356,30 +394,44 @@ export default function AdminDashboardView() {
                 </div>
               </section>
 
-              {/* Distribución Geográfica */}
+              {/* Distribución Geográfica y Plantas / Divisiones (TKT-UW-004) */}
               <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="card-brand p-6">
                   <h3 className="font-antonio text-lg text-[#0044B5] uppercase mb-5 flex items-center gap-2">
                     <span className="divider-gold" />
-                    Localidades de Incidencia
+                    Localidades de Incidencia (Por Planta y División)
                   </h3>
-                  <div className="space-y-4">
-                    {metrics?.locations.map(loc => (
-                      <div key={loc.municipality} className="flex items-center gap-4">
-                        <div className="text-sm font-semibold text-[#1A2340] w-32 truncate">
-                          {loc.municipality || 'No especificado'}
+                  <div className="space-y-3 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
+                    {metrics?.locations.map((loc, idx) => {
+                      const count = Number(loc.total_activities ?? loc.count ?? 0);
+                      const totalActions = metrics.general.total_actions || 1;
+                      const pct = Math.min(100, Math.round((count / totalActions) * 100));
+                      return (
+                        <div key={idx} className="flex items-center gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
+                          <div className="w-48 truncate">
+                            <p className="text-xs font-bold text-[#1A2340] truncate">
+                              {loc.plant_name || loc.municipality || 'Planta General'}
+                            </p>
+                            {loc.division_name && (
+                              <p className="text-[11px] text-[#0044B5] font-semibold truncate">
+                                División: {loc.division_name}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex-1 progress-brand-track h-2">
+                            <div
+                              className="h-full bg-[#0044B5] rounded-full transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <div className="text-xs font-black text-[#FFBA00] w-14 text-right whitespace-nowrap">
+                            {count} {count === 1 ? 'act.' : 'acts.'}
+                          </div>
                         </div>
-                        <div className="flex-1 progress-brand-track h-2">
-                          <div
-                            className="h-full bg-[#0044B5] rounded-full transition-all"
-                            style={{ width: `${Math.min(100, (loc.count / (metrics.general.total_registrations || 1)) * 100)}%` }}
-                          />
-                        </div>
-                        <div className="text-xs font-black text-[#FFBA00] w-6 text-right">{loc.count}</div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {(!metrics?.locations || metrics.locations.length === 0) && (
-                      <p className="text-[#9AA3B4] italic text-center py-4">No hay datos geográficos aún.</p>
+                      <p className="text-[#9AA3B4] italic text-center py-6">No hay plantas o divisiones con registros aún.</p>
                     )}
                   </div>
                 </div>
