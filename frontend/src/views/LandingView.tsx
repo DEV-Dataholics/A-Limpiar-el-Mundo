@@ -384,7 +384,7 @@ export default function LandingView() {
                   </p>
 
                   <p className="text-slate-800/85 text-base sm:text-lg font-medium leading-relaxed mb-8 max-w-xl text-center lg:text-left">
-                    Cada parque rehabilitado, plaza dignificada o área verde limpia fortalece el tejido social y genera entornos más seguros y saludables en todo Chihuahua.
+                    Cada parque rehabilitado, plaza dignificada o área verde limpia fortalece el tejido social y genera entornos más seguros y saludables.
                   </p>
 
                   <div className="flex flex-wrap gap-4 justify-center lg:justify-start w-full">
@@ -422,7 +422,7 @@ export default function LandingView() {
                     {/* Badge superior flotante Cactus */}
                     <div className="absolute -top-3.5 -left-3.5 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-xl border border-white/80 flex items-center gap-2">
                       <span className="text-xl">🌵</span>
-                      <span className="text-xs font-extrabold text-[#002D7A] uppercase tracking-wider">Chihuahua Unido</span>
+                      <span className="text-xs font-extrabold text-[#002D7A] uppercase tracking-wider">Comunidad Unida</span>
                     </div>
 
                     {/* Marco de Foto de la Jornada */}
@@ -491,7 +491,7 @@ export default function LandingView() {
                   Áreas Verdes y Conservación
                 </h4>
                 <p className="text-slate-600 text-sm md:text-base leading-relaxed font-medium">
-                  Cuidado, riego y reforestación de camellones, jardines públicos y zonas arboladas para mitigar el calor urbano y enriquecer el ecosistema de Chihuahua.
+                  Cuidado, riego y reforestación de camellones, jardines públicos y zonas arboladas para mitigar el calor urbano y enriquecer el ecosistema.
                 </p>
               </div>
 
@@ -571,7 +571,7 @@ export default function LandingView() {
           <div className="flex flex-col items-center md:items-start gap-4">
             <img src="/logo-uwch-35-white-color.png" alt="United Way Chihuahua 35 Aniversario" className="h-14 w-auto object-contain" />
             <p className="text-white/70 text-xs font-medium max-w-[260px] leading-relaxed">
-              United Way - Fondo Unido Chihuahua.<br/>Uniendo fuerzas por un futuro más próspero.
+              United Way Chihuahua.<br/>Uniendo fuerzas por un futuro más próspero.
             </p>
           </div>
 
@@ -586,7 +586,7 @@ export default function LandingView() {
           {/* Copyright y Legal */}
           <div className="text-center md:text-right text-white/60 text-xs flex flex-col gap-2">
             <p className="font-bold uppercase tracking-widest text-[#FFBA00]">A Limpiar el Mundo 2026</p>
-            <p className="text-[11px] opacity-75 leading-relaxed">Plataforma oficial para el registro, cuantificación y trazabilidad de impacto voluntario en espacios públicos de Chihuahua.</p>
+            <p className="text-[11px] opacity-75 leading-relaxed">Plataforma oficial para el registro, cuantificación y trazabilidad de impacto voluntario en espacios públicos.</p>
           </div>
         </div>
 

@@ -69,7 +69,7 @@ export default function DynamicRegistrationForm() {
 
           <div className="md:col-span-2 bg-[#F4F6FA] border border-[#D8E2F0] rounded-xl p-4 mt-2">
             <label className="block text-sm font-bold text-[#1A2340] mb-3">
-              ¿Alguien de FUCH (Fondo Unido Chihuahua) te acompañó a la actividad? *
+              ¿Alguien de United Way Chihuahua te acompañó a la actividad? *
             </label>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">

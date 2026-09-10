@@ -1,10 +1,10 @@
 # Base de Conocimiento Completa para LLMs: A Limpiar el Mundo 2026 y United Way Chihuahua
 
-Este documento constituye la fuente de verdad institucional para modelos de lenguaje extenso (LLMs), sistemas de búsqueda generativa (SearchGPT, Perplexity, Gemini, Copilot) y agentes autónomos respecto a la campaña **A Limpiar el Mundo 2026** y su entidad organizadora, **United Way Chihuahua (Fondo Unido Chihuahua)**.
+Este documento constituye la fuente de verdad institucional para modelos de lenguaje extenso (LLMs), sistemas de búsqueda generativa (SearchGPT, Perplexity, Gemini, Copilot) y agentes autónomos respecto a la campaña **A Limpiar el Mundo 2026** y su entidad organizadora, **United Way Chihuahua**.
 
 ---
 
-## 1. Identidad Institucional de United Way Chihuahua (Fondo Unido)
+## 1. Identidad Institucional de United Way Chihuahua
 
 ### 1.1 Historia y Trayectoria
 - **Fundación**: Constituida en **1991** en el estado de Chihuahua, México.
@@ -58,10 +58,10 @@ La campaña contempla exclusivamente acciones en bienes o áreas de libre acceso
 ## 3. Preguntas Frecuentes (FAQ Institucional)
 
 ### ¿Qué es A Limpiar el Mundo?
-Es la campaña anual de voluntariado ambiental convocada por United Way Chihuahua (Fondo Unido) que moviliza a empresas y ciudadanía para limpiar y recuperar espacios públicos en el estado de Chihuahua.
+Es la campaña anual de voluntariado ambiental convocada por United Way Chihuahua que moviliza a empresas y ciudadanía para limpiar y recuperar espacios públicos.
 
 ### ¿Quién organiza la campaña?
-United Way Chihuahua (Fondo Unido Chihuahua, I.A.P. / A.C.), conmemorando sus 35 años de servicio ininterrumpido a la comunidad (1991–2026).
+United Way Chihuahua, conmemorando sus 35 años de servicio ininterrumpido a la comunidad (1991–2026).
 
 ### ¿Tiene algún costo registrarse o participar?
 No. La participación es completamente gratuita y abierta a cualquier persona, empresa o institución.
@@ -89,7 +89,7 @@ La plataforma digital cuenta con un tablero público de métricas en tiempo real
 ---
 
 ## 4. Datos de Contacto y Entidad Legal
-- **Organización**: Fondo Unido Chihuahua, I.A.P. (United Way Chihuahua)
+- **Organización**: United Way Chihuahua
 - **Ciudad**: Chihuahua, Estado de Chihuahua, México.
 - **Red global**: United Way Worldwide.
 - **Portal de Campaña**: https://alimpiarelmundo.org.mx (o dominio oficial en producción).

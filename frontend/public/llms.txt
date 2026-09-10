@@ -1,9 +1,9 @@
-# A Limpiar el Mundo 2026 — United Way Chihuahua (Fondo Unido)
+# A Limpiar el Mundo 2026 — United Way Chihuahua
 
-> Plataforma oficial de voluntariado comunitario, registro de actividades y cuantificación de impacto ambiental de la campaña anual "A Limpiar el Mundo 2026", organizada por United Way Chihuahua (Fondo Unido Chihuahua).
+> Plataforma oficial de voluntariado comunitario, registro de actividades y cuantificación de impacto ambiental de la campaña anual "A Limpiar el Mundo 2026", organizada por United Way Chihuahua.
 
 ## Organización Convocante
-- **Nombre**: United Way Chihuahua / Fondo Unido Chihuahua
+- **Nombre**: United Way Chihuahua
 - **Naturaleza**: Organización no gubernamental sin fines de lucro (I.A.P. / A.C.), miembro oficial de la red global United Way Worldwide.
 - **Aniversario**: Conmemorando 35 años de impacto comunitario en el estado de Chihuahua, México (1991 – 2026).
 - **Misión**: Movilizar a las comunidades a la acción para que todos puedan prosperar, articulando esfuerzos entre empresas, organizaciones de la sociedad civil, escuelas y ciudadanía.
