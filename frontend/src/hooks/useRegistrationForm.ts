@@ -101,6 +101,7 @@ export function useRegistrationForm() {
       formData.append('scheduled_date', scheduledDate);
       formData.append('volunteer_count', volunteerCount.toString());
       formData.append('activity_type', activityType);
+      formData.append('modality', activityType);
       formData.append('group_name', groupName);
       formData.append('location_name', locationName);
       formData.append('location_address', `${municipality}, ${state}`);

@@ -11,6 +11,7 @@ export default function DynamicRegistrationForm() {
   const {
     legalConsent, setLegalConsent,
     loading, error,
+    activityType, setActivityType,
     scheduledDate, setScheduledDate,
     volunteerCount, setVolunteerCount,
     description, setDescription,
@@ -59,11 +60,14 @@ export default function DynamicRegistrationForm() {
           <div className="md:col-span-2">
             <label className="block text-xs font-black text-[#0044B5] mb-1 uppercase tracking-wide">Modalidad de la actividad *</label>
             <select
-              value="Corporativa"
-              disabled
-              className="input-brand w-full px-4 py-3 rounded-lg bg-gray-100 cursor-not-allowed opacity-80"
+              value={activityType}
+              onChange={(e) => setActivityType(e.target.value)}
+              className="input-brand w-full px-4 py-3 rounded-lg"
             >
               <option value="Corporativa">Corporativa</option>
+              <option value="Institucional">Institucional</option>
+              <option value="Escuela">Escuela</option>
+              <option value="Comunidad">Comunidad</option>
             </select>
           </div>
 

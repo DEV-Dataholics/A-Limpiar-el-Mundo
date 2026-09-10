@@ -100,6 +100,16 @@ class Registrations extends ResourceController
             return $this->failValidationErrors(['corporate_id' => 'Debe seleccionar a quién representa.']);
         }
 
+        $rawModality = $this->request->getVar('modality') ?: $this->request->getVar('activity_type') ?: 'Corporativa';
+        $modalityMap = [
+            'corporativa' => 'Corporativa',
+            'institucional' => 'Institucional',
+            'escuela' => 'Escuela',
+            'comunidad' => 'Comunidad',
+        ];
+        $normKey = strtolower(trim((string)$rawModality));
+        $modality = $modalityMap[$normKey] ?? 'Corporativa';
+
         $data = [
             'campaign_id' => $campaign['id'],
             'corporate_id' => $corporateId,
@@ -110,15 +120,10 @@ class Registrations extends ResourceController
             'total_volunteers' => $this->request->getVar('total_volunteers') ?: 1,
             'individual_hours_duration' => $this->request->getVar('individual_hours_duration') ?: 0,
             'accompanied_by_fuch' => $this->request->getVar('accompanied_by_fuch') ? 1 : 0,
-            'modality' => 'CORPORATIVA', // Default locked to CORPORATIVA
+            'modality' => $modality,
             'status' => 'approved',
             'description' => $this->request->getVar('description'),
         ];
-
-        // Ensure if NOT accompanied_by_fuch it is forced to 'CORPORATIVA'
-        if (!$data['accompanied_by_fuch']) {
-            $data['modality'] = 'CORPORATIVA';
-        }
 
         // Handle File Upload
         $evidenceFile = $this->request->getFile('evidence_image');
