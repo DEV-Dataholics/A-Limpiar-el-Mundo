@@ -49,7 +49,7 @@ export default function ProfileForm({ onSaved }: { onSaved?: () => void }) {
     setSuccessMsg('');
     setErrorMsg('');
     try {
-      const response = await fetch(`${API_URL}/auth/profile`, {
+      const response = await fetch(`${API_URL}/api/auth/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(formData)

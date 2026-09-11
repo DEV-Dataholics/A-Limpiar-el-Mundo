@@ -27,6 +27,8 @@ class Cors extends BaseConfig
     public array $default = [
         // Set only the production frontend origin here for production deployment
         'allowedOrigins'         => [
+            'https://alimpiarelmundo.dataholics.com.mx',
+            'http://alimpiarelmundo.dataholics.com.mx',
             'https://somoscomunidad.dataholics.com.mx',
             'http://localhost:5173',
             'http://127.0.0.1:5173'

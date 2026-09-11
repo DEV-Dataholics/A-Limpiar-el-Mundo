@@ -9,6 +9,8 @@ BASE_DIR = r"C:\Users\luisc\Documents\Dataholics\Dataholics Guidelines\proyectos
 LOCAL_DIST = os.path.join(BASE_DIR, "frontend", "dist")
 
 BACKEND_FILES = [
+    ("api/app/Config/App.php", "/api/app/Config/App.php"),
+    ("api/app/Config/Cors.php", "/api/app/Config/Cors.php"),
     ("api/app/Config/Routes.php", "/api/app/Config/Routes.php"),
     ("api/app/Controllers/Admin/Corporates.php", "/api/app/Controllers/Admin/Corporates.php"),
     ("api/app/Controllers/Admin/Metrics.php", "/api/app/Controllers/Admin/Metrics.php"),
