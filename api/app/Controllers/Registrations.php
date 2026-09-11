@@ -113,6 +113,20 @@ class Registrations extends ResourceController
         $totalVolunteers = $this->request->getVar('total_volunteers') ?: $this->request->getVar('volunteer_count') ?: 1;
         $durationHours = $this->request->getVar('individual_hours_duration') ?: $this->request->getVar('duration_hours') ?: 0;
 
+        $desc = trim((string) $this->request->getVar('description'));
+        $customName = trim((string) $this->request->getVar('custom_activity_name'));
+        $locName = trim((string) $this->request->getVar('location_name'));
+        $locAddr = trim((string) $this->request->getVar('location_address'));
+
+        $fullDescription = $desc;
+        if (!empty($customName) && strpos($fullDescription, $customName) === false) {
+            $prefix = "Actividad: {$customName}";
+            if (!empty($locName)) {
+                $prefix .= " | Lugar: {$locName}" . (!empty($locAddr) ? " ({$locAddr})" : "");
+            }
+            $fullDescription = $fullDescription ? "{$prefix}\n\n{$fullDescription}" : $prefix;
+        }
+
         $data = [
             'campaign_id' => $campaign['id'],
             'corporate_id' => $corporateId,
@@ -125,15 +139,17 @@ class Registrations extends ResourceController
             'accompanied_by_fuch' => $this->request->getVar('accompanied_by_fuch') ? 1 : 0,
             'modality' => $modality,
             'status' => 'approved',
-            'description' => $this->request->getVar('description'),
+            'description' => $fullDescription,
         ];
 
-        // Handle File Upload
+        // Handle File Upload or Evidence Link
         $evidenceFile = $this->request->getFile('evidence_image');
         if ($evidenceFile && $evidenceFile->isValid() && ! $evidenceFile->hasMoved()) {
             $newName = $evidenceFile->getRandomName();
             $evidenceFile->move(FCPATH . 'uploads', $newName);
             $data['evidence_image_url'] = base_url('uploads/' . $newName);
+        } elseif ($this->request->getVar('evidence_links')) {
+            $data['evidence_image_url'] = trim((string) $this->request->getVar('evidence_links'));
         }
 
         $activityModel = new ActivityModel();
