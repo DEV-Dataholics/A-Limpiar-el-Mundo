@@ -26,6 +26,7 @@ $registerAppRoutes = static function ($routes) {
     $routes->post('auth/login', 'Auth::login');
     $routes->put('auth/profile', 'Auth::updateProfile');
     $routes->post('auth/forgot-password', 'Auth::forgotPassword');
+    $routes->get('auth/validate-reset-token', 'Auth::validateResetToken');
     $routes->post('auth/reset-password', 'Auth::resetPassword');
     $routes->get('users', 'Auth::listUsers');
 

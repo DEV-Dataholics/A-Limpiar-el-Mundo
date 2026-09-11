@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LandingView from './views/LandingView';
 import LoginView from './views/LoginView';
 import RegisterView from './views/RegisterView';
+import ResetPasswordView from './views/ResetPasswordView';
 import DashboardView from './views/DashboardView';
 import AdminDashboardView from './views/AdminDashboardView';
 
@@ -29,6 +30,7 @@ function App() {
             <Route path="/" element={<LandingView />} />
             <Route path="/login" element={<LoginView />} />
             <Route path="/register" element={<RegisterView />} />
+            <Route path="/reset-password" element={<ResetPasswordView />} />
             <Route 
               path="/dashboard" 
               element={

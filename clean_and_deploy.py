@@ -12,6 +12,7 @@ BACKEND_FILES = [
     ("api/.env", "/api/.env"),
     ("api/app/Config/App.php", "/api/app/Config/App.php"),
     ("api/app/Config/Cors.php", "/api/app/Config/Cors.php"),
+    ("api/app/Config/Email.php", "/api/app/Config/Email.php"),
     ("api/app/Config/Routes.php", "/api/app/Config/Routes.php"),
     ("api/app/Filters/AdminAuthFilter.php", "/api/app/Filters/AdminAuthFilter.php"),
     ("api/app/Controllers/Auth.php", "/api/app/Controllers/Auth.php"),

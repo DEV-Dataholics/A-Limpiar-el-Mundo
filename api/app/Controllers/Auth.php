@@ -230,13 +230,207 @@ class Auth extends ResourceController
 
     public function forgotPassword()
     {
-        // Mocked for now - we would send an email with a reset token here.
-        return $this->respond(['status' => 200, 'message' => 'Si el correo existe, se enviarán instrucciones de recuperación.']);
+        $email = trim((string) $this->request->getVar('email'));
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->failValidationErrors(['email' => 'Proporciona un correo electrónico válido.']);
+        }
+
+        $genericResponse = [
+            'status'  => 200,
+            'message' => 'Si el correo electrónico está registrado, recibirás un enlace para restablecer tu contraseña en los próximos minutos.'
+        ];
+
+        try {
+            $db = \Config\Database::connect();
+            $user = $db->table('users')
+                ->where('email', $email)
+                ->get(1)
+                ->getRowArray();
+
+            if (!$user) {
+                // Return generic response to prevent email enumeration
+                return $this->respond($genericResponse);
+            }
+
+            // Invalidate any older tokens for this user
+            $db->table('password_resets')->where('email', $email)->delete();
+
+            // Generate secure token (32 bytes = 64 hex characters)
+            $token = bin2hex(random_bytes(32));
+            $now = date('Y-m-d H:i:s');
+            $expiresAt = date('Y-m-d H:i:s', time() + 3600); // 1 hour validity
+
+            $db->table('password_resets')->insert([
+                'email'      => $email,
+                'token'      => $token,
+                'expires_at' => $expiresAt,
+                'created_at' => $now,
+            ]);
+
+            // Construct Reset Link
+            $baseURL = rtrim((string) (config('App')->baseURL ?: 'https://alimpiarelmundo.dataholics.com.mx'), '/');
+            $resetLink = $baseURL . '/reset-password?token=' . urlencode($token);
+
+            $userName = !empty($user['name']) ? htmlspecialchars($user['name']) : 'Voluntario(a)';
+
+            // Prepare Email Content
+            $emailService = \Config\Services::email();
+            $emailService->setTo($email);
+            $emailService->setSubject('Recuperación de contraseña - A Limpiar el Mundo 2026');
+
+            $htmlMessage = <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Recuperación de contraseña</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6FA; color: #1A2340; margin: 0; padding: 24px; }
+    .card { max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #D8E2F0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .header { background: #0044B5; padding: 28px 24px; text-align: center; color: #ffffff; }
+    .header h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .header p { margin: 6px 0 0; font-size: 12px; color: #FFBA00; font-weight: 600; letter-spacing: 0.5px; }
+    .body { padding: 32px 28px; line-height: 1.6; font-size: 15px; }
+    .btn-container { text-align: center; margin: 30px 0; }
+    .btn { display: inline-block; background-color: #0044B5; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .link-alt { word-break: break-all; font-size: 12px; color: #0044B5; background: #F4F6FA; padding: 12px; border-radius: 8px; margin-top: 16px; }
+    .footer { border-top: 1px solid #E2E8F0; padding: 20px 28px; font-size: 12px; color: #718096; line-height: 1.5; background: #FAFAFC; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>A Limpiar el Mundo 2026</h1>
+      <p>United Way Chihuahua · 35 Aniversario</p>
+    </div>
+    <div class="body">
+      <p>Hola <strong>{$userName}</strong>,</p>
+      <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en la plataforma de voluntariado e impacto social.</p>
+      <p>Para crear una nueva contraseña, haz clic en el siguiente botón:</p>
+      <div class="btn-container">
+        <a href="{$resetLink}" class="btn" target="_blank">Restablecer mi Contraseña</a>
+      </div>
+      <p style="font-size: 13px; color: #4A5568;">
+        Este enlace es de un solo uso y expirará en <strong>60 minutos</strong>.
+      </p>
+      <p style="font-size: 13px; color: #718096; margin-top: 24px;">
+        Si el botón no funciona, copia y pega este enlace en tu navegador:
+      </p>
+      <div class="link-alt">{$resetLink}</div>
+    </div>
+    <div class="footer">
+      Si no solicitaste este cambio, no te preocupes: tu cuenta sigue protegida y puedes ignorar este mensaje.<br>
+      © 2026 United Way Chihuahua / A Limpiar el Mundo.
+    </div>
+  </div>
+</body>
+</html>
+HTML;
+
+            $emailService->setMessage($htmlMessage);
+
+            if (!@$emailService->send(false)) {
+                // Log debug for administrators/developers in case of server sendmail issues
+                log_message('error', 'Error enviando correo de recuperación a {email}: {debugger}', [
+                    'email'    => $email,
+                    'debugger' => $emailService->printDebugger(['headers'])
+                ]);
+            } else {
+                log_message('info', 'Correo de recuperación enviado exitosamente a {email}', ['email' => $email]);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Excepción en forgotPassword: {message}', ['message' => $e->getMessage()]);
+        }
+
+        return $this->respond($genericResponse);
+    }
+
+    public function validateResetToken()
+    {
+        $token = trim((string) $this->request->getVar('token'));
+        if (empty($token)) {
+            return $this->failValidationErrors(['token' => 'Token no proporcionado.']);
+        }
+
+        $db = \Config\Database::connect();
+        $record = $db->table('password_resets')
+            ->where('token', $token)
+            ->get(1)
+            ->getRowArray();
+
+        if (!$record) {
+            return $this->respond([
+                'status'  => 404,
+                'valid'   => false,
+                'message' => 'El enlace de recuperación no es válido o ya fue utilizado.'
+            ], 404);
+        }
+
+        if (strtotime($record['expires_at']) < time()) {
+            return $this->respond([
+                'status'  => 410,
+                'valid'   => false,
+                'message' => 'El enlace de recuperación ha expirado. Por favor solicita uno nuevo.'
+            ], 410);
+        }
+
+        return $this->respond([
+            'status' => 200,
+            'valid'  => true,
+            'email'  => $record['email'],
+        ]);
     }
 
     public function resetPassword()
     {
-        // Mocked for now - we would validate token and update password.
-        return $this->respond(['status' => 200, 'message' => 'Contraseña actualizada.']);
+        $rules = [
+            'token'            => 'required',
+            'password'         => 'required|min_length[8]',
+            'password_confirm' => 'required|matches[password]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->failValidationErrors($this->validator->getErrors());
+        }
+
+        $token = trim((string) $this->request->getVar('token'));
+        $password = (string) $this->request->getVar('password');
+
+        $db = \Config\Database::connect();
+        $record = $db->table('password_resets')
+            ->where('token', $token)
+            ->get(1)
+            ->getRowArray();
+
+        if (!$record) {
+            return $this->failNotFound('El enlace de recuperación es inválido o ya fue utilizado.');
+        }
+
+        if (strtotime($record['expires_at']) < time()) {
+            return $this->fail('El enlace de recuperación ha expirado. Solicita un nuevo enlace.', 410);
+        }
+
+        $email = $record['email'];
+        $user = $db->table('users')->where('email', $email)->get(1)->getRowArray();
+        if (!$user) {
+            return $this->failNotFound('El usuario asociado a esta solicitud ya no existe.');
+        }
+
+        // Update password with secure bcrypt hash
+        $newHash = password_hash($password, PASSWORD_BCRYPT);
+        $db->table('users')
+            ->where('id', $user['id'])
+            ->update([
+                'password'   => $newHash,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+        // Consume/delete token to prevent replay
+        $db->table('password_resets')->where('email', $email)->delete();
+
+        return $this->respond([
+            'status'  => 200,
+            'message' => 'Tu contraseña ha sido actualizada exitosamente. Ya puedes iniciar sesión con tus nuevas credenciales.'
+        ]);
     }
 }
