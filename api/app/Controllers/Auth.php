@@ -83,6 +83,9 @@ class Auth extends ResourceController
         $userModel->insert($data);
         $userId = $userModel->getInsertID();
 
+        // Enviar correo de bienvenida institucional
+        $this->sendWelcomeEmail($data['email'], (string) ($data['name'] ?? 'Voluntario(a)'));
+
         return $this->respondCreated([
             'status'  => 201,
             'message' => 'Usuario registrado exitosamente',
@@ -432,5 +435,93 @@ HTML;
             'status'  => 200,
             'message' => 'Tu contraseña ha sido actualizada exitosamente. Ya puedes iniciar sesión con tus nuevas credenciales.'
         ]);
+    }
+
+    private function sendWelcomeEmail(string $email, string $name): void
+    {
+        try {
+            $baseURL = rtrim((string) (config('App')->baseURL ?: 'https://alimpiarelmundo.dataholics.com.mx'), '/');
+            $loginLink = $baseURL . '/login';
+            $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+
+            $emailService = \Config\Services::email();
+            $emailService->setTo($email);
+            $emailService->setSubject('¡Bienvenido(a) a A Limpiar el Mundo 2026!');
+
+            $htmlMessage = <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Bienvenido a A Limpiar el Mundo</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4F6FA; color: #1A2340; margin: 0; padding: 24px; }
+    .card { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #D8E2F0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .header { background: #0044B5; padding: 32px 24px; text-align: center; color: #ffffff; }
+    .header h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .header p { margin: 6px 0 0; font-size: 13px; color: #FFBA00; font-weight: 600; letter-spacing: 0.5px; }
+    .body { padding: 32px 28px; line-height: 1.6; font-size: 15px; }
+    .highlight-box { background: #F4F6FA; border-left: 4px solid #0044B5; border-radius: 0 12px 12px 0; padding: 16px; margin: 24px 0; font-size: 14px; }
+    .highlight-box ul { margin: 8px 0 0; padding-left: 20px; }
+    .highlight-box li { margin-bottom: 6px; }
+    .btn-container { text-align: center; margin: 32px 0 24px; }
+    .btn { display: inline-block; background-color: #0044B5; color: #ffffff !important; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 10px rgba(0,68,181,0.25); }
+    .footer { border-top: 1px solid #E2E8F0; padding: 20px 28px; font-size: 12px; color: #718096; line-height: 1.5; background: #FAFAFC; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>A Limpiar el Mundo 2026</h1>
+      <p>United Way Chihuahua · 35 Aniversario</p>
+    </div>
+    <div class="body">
+      <p style="font-size: 17px; margin-top: 0;">¡Hola <strong>{$safeName}</strong>!</p>
+      <p>
+        Te damos una cálida bienvenida a la plataforma oficial de <strong>A Limpiar el Mundo 2026</strong>, impulsada por <strong>United Way Chihuahua</strong>.
+      </p>
+      <p>
+        Tu cuenta ha sido creada exitosamente. A partir de este momento eres parte activa del movimiento de impacto social y comunitario más importante de nuestra región.
+      </p>
+
+      <div class="highlight-box">
+        <strong>¿Qué puedes hacer en la plataforma?</strong>
+        <ul>
+          <li><strong>Explorar Causas:</strong> Conocer las actividades institucionales y comunitarias activas.</li>
+          <li><strong>Registrar tu Impacto:</strong> Reportar tus horas de voluntariado, evidencias y beneficiarios atendidos.</li>
+          <li><strong>Métricas en Vivo:</strong> Ver el avance del impacto acumulado por empresas, plantas y comunidades.</li>
+        </ul>
+      </div>
+
+      <p style="font-size: 14px; color: #4A5568;">
+        Tu correo de acceso registrado es: <strong style="color: #0044B5;">{$email}</strong>
+      </p>
+
+      <div class="btn-container">
+        <a href="{$loginLink}" class="btn" target="_blank">Ingresar a la Plataforma</a>
+      </div>
+    </div>
+    <div class="footer">
+      <strong>United Way Chihuahua</strong> · Fondos Unidos de Chihuahua, A.C.<br>
+      Juntos multiplicamos el impacto en nuestra comunidad.<br>
+      © 2026 A Limpiar el Mundo.
+    </div>
+  </div>
+</body>
+</html>
+HTML;
+
+            $emailService->setMessage($htmlMessage);
+            if (!@$emailService->send(false)) {
+                log_message('error', 'Error enviando correo de bienvenida a {email}: {debugger}', [
+                    'email'    => $email,
+                    'debugger' => $emailService->printDebugger(['headers'])
+                ]);
+            } else {
+                log_message('info', 'Correo de bienvenida enviado exitosamente a {email}', ['email' => $email]);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'Excepción enviando correo de bienvenida: {message}', ['message' => $e->getMessage()]);
+        }
     }
 }
