@@ -437,6 +437,23 @@ HTML;
         ]);
     }
 
+    public function resendWelcome()
+    {
+        $email = trim((string) ($this->request->getVar('email') ?: 'development@dataholics.com.mx'));
+        $db = \Config\Database::connect();
+        $user = $db->table('users')->where('email', $email)->get(1)->getRowArray();
+        if (!$user) {
+            return $this->failNotFound('Usuario no encontrado.');
+        }
+
+        $this->sendWelcomeEmail($user['email'], (string) ($user['name'] ?? 'Voluntario(a)'));
+
+        return $this->respond([
+            'status'  => 200,
+            'message' => "Correo de bienvenida enviado exitosamente a {$user['email']}"
+        ]);
+    }
+
     private function sendWelcomeEmail(string $email, string $name): void
     {
         try {
