@@ -133,7 +133,7 @@ export default function UserManager({ token }: { token: string }) {
     a.href = url;
     a.download = `reporte_voluntarios_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
-    URL.revokeObjectURL(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
