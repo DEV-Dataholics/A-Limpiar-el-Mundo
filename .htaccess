@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Route /api/ to CodeIgniter front controller
+    RewriteCond %{REQUEST_URI} ^/api(/.*)?$
+    RewriteRule ^api/?(.*)$ api/public/index.php/$1 [L,QSA]
+
+    # React SPA fallback - all other non-file/dir requests to index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>
