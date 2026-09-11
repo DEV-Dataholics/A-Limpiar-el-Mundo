@@ -69,6 +69,10 @@ export default function CorporateManager({ token: propToken }: { token?: string 
         setCorporates(data.corporates || []);
         setPlants(data.plants || []);
         setDivisions(data.divisions || []);
+      } else if (res.status === 401 || res.status === 403) {
+        setErrorMsg('Tu sesión actual ha expirado o requiere renovación. Por favor haz clic en "Salir →" en la esquina superior derecha y vuelve a entrar como Administrador.');
+      } else {
+        setErrorMsg(data.error || data.message || 'Error al obtener empresas');
       }
     } catch (err) {
       console.error('Error fetching corporates:', err);
@@ -223,6 +227,16 @@ export default function CorporateManager({ token: propToken }: { token?: string 
             <span>{successMsg}</span>
           </div>
           <button onClick={() => setSuccessMsg(null)} className="text-emerald-500 hover:text-emerald-800">✕</button>
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl flex items-center justify-between text-sm shadow-sm animate-fade-in">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-amber-600">⚠️</span>
+            <span>{errorMsg}</span>
+          </div>
+          <button onClick={() => setErrorMsg(null)} className="text-amber-500 hover:text-amber-800">✕</button>
         </div>
       )}
 

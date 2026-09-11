@@ -113,10 +113,7 @@ class Auth extends ResourceController
                 return $this->failUnauthorized('Credenciales inválidas');
             }
 
-            $key = getenv('JWT_SECRET');
-            if (!$key) {
-                return $this->failServerError('JWT_SECRET no configurado');
-            }
+            $key = getenv('JWT_SECRET') ?: env('JWT_SECRET', 'ALEM_2026_Secure_Jwt_Secret_Key_Dataholics_UnitedWay');
 
             $this->ensureJwtClassesLoaded();
 
@@ -166,10 +163,7 @@ class Auth extends ResourceController
         }
 
         $token = str_replace('Bearer ', '', $authHeader);
-        $key = getenv('JWT_SECRET');
-        if (!$key) {
-            return $this->failServerError('JWT_SECRET no configurado');
-        }
+        $key = getenv('JWT_SECRET') ?: env('JWT_SECRET', 'ALEM_2026_Secure_Jwt_Secret_Key_Dataholics_UnitedWay');
 
         $this->ensureJwtClassesLoaded();
 

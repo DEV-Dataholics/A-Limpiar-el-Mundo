@@ -9,9 +9,12 @@ BASE_DIR = r"C:\Users\luisc\Documents\Dataholics\Dataholics Guidelines\proyectos
 LOCAL_DIST = os.path.join(BASE_DIR, "frontend", "dist")
 
 BACKEND_FILES = [
+    ("api/.env", "/api/.env"),
     ("api/app/Config/App.php", "/api/app/Config/App.php"),
     ("api/app/Config/Cors.php", "/api/app/Config/Cors.php"),
     ("api/app/Config/Routes.php", "/api/app/Config/Routes.php"),
+    ("api/app/Filters/AdminAuthFilter.php", "/api/app/Filters/AdminAuthFilter.php"),
+    ("api/app/Controllers/Auth.php", "/api/app/Controllers/Auth.php"),
     ("api/app/Controllers/Admin/Corporates.php", "/api/app/Controllers/Admin/Corporates.php"),
     ("api/app/Controllers/Admin/Metrics.php", "/api/app/Controllers/Admin/Metrics.php"),
     ("api/app/Controllers/Admin/Users.php", "/api/app/Controllers/Admin/Users.php"),
@@ -75,10 +78,10 @@ def main():
     # Subir index.html
     upload_file(ftp, os.path.join(LOCAL_DIST, "index.html"), "/index.html")
 
-    # Subir el resto de archivos en root de dist
+    # Subir el resto de archivos en root de dist (omitiendo jpgs ya presentes)
     for f in os.listdir(LOCAL_DIST):
         local_p = os.path.join(LOCAL_DIST, f)
-        if os.path.isfile(local_p) and f != "index.html":
+        if os.path.isfile(local_p) and f != "index.html" and not f.lower().endswith(".jpg"):
             upload_file(ftp, local_p, f"/{f}")
 
     ftp.quit()

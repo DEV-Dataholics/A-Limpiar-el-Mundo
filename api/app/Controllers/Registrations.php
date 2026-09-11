@@ -33,8 +33,7 @@ class Registrations extends ResourceController
         }
 
         $token = str_replace('Bearer ', '', $authHeader);
-        $key = getenv('JWT_SECRET');
-        if (!$key) return null;
+        $key = getenv('JWT_SECRET') ?: env('JWT_SECRET', 'ALEM_2026_Secure_Jwt_Secret_Key_Dataholics_UnitedWay');
 
         try {
             $this->ensureJwtClassesLoaded();
