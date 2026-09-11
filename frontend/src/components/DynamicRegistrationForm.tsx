@@ -112,10 +112,20 @@ export default function DynamicRegistrationForm() {
             <PredictiveCompanySelector
               value={groupName}
               onChange={setGroupName}
-              label="Empresa corporativa"
+              label={
+                activityType === 'Escuela' ? 'Escuela, colegio o facultad' :
+                activityType === 'Institucional' ? 'Institución u organización' :
+                activityType === 'Comunidad' ? 'Comunidad, colectivo o brigada' :
+                'Empresa corporativa, organización o escuela'
+              }
               required
-              placeholder="Escribe para buscar tu empresa o planta..."
-              helperText="Escribe el nombre o iniciales de la empresa para ver sugerencias predictivas instantáneas."
+              placeholder={
+                activityType === 'Escuela' ? 'Escribe para buscar o ingresar tu escuela o plantel...' :
+                activityType === 'Institucional' ? 'Escribe para buscar o ingresar tu institución...' :
+                activityType === 'Comunidad' ? 'Escribe el nombre de tu comunidad o brigada...' :
+                'Escribe para buscar tu empresa o planta corporativa...'
+              }
+              helperText="Escribe el nombre o iniciales para desplegar sugerencias predictivas del catálogo."
               onSelectEntity={(entity) => {
                 if (entity.corporate_id) setCorporateId(entity.corporate_id);
                 else if (entity.type === 'corporate') setCorporateId(entity.id);
