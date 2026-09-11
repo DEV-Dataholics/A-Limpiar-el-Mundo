@@ -6,6 +6,7 @@ import ActivityManager from '../components/admin/ActivityManager';
 import RegistrationManager from '../components/admin/RegistrationManager';
 import UserManager from '../components/admin/UserManager';
 import MobilizationReports from '../components/admin/MobilizationReports';
+import CorporateManager from '../components/admin/CorporateManager';
 import { API_URL } from '../config';
 
 const API_BASE_URL = API_URL;
@@ -39,11 +40,12 @@ type MetricData = {
   top_corporates?: Array<{ name: string; hours: number; count: number }>;
 };
 
-type NavTab = 'metrics' | 'activities' | 'users' | 'registrations';
+type NavTab = 'metrics' | 'activities' | 'corporates' | 'registrations' | 'users';
 
 const navItems: { id: NavTab; label: string; icon: string }[] = [
   { id: 'metrics',       label: 'Resumen de Impacto',   icon: '📊' },
   { id: 'activities',    label: 'Catálogo de Causas',    icon: '📂' },
+  { id: 'corporates',    label: 'Empresas y Plantas',    icon: '🏢' },
   { id: 'registrations', label: 'Validar Impactos',      icon: '🤝' },
   { id: 'users',         label: 'Comunidad SC',          icon: '👥' },
 ];
@@ -589,6 +591,7 @@ export default function AdminDashboardView() {
           )}
 
           {activeTab === 'activities'    && <ActivityManager token={token!} />}
+          {activeTab === 'corporates'    && <CorporateManager token={token!} />}
           {activeTab === 'registrations' && <RegistrationManager token={token!} />}
           {activeTab === 'users'         && <UserManager token={token!} />}
         </main>

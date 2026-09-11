@@ -44,6 +44,11 @@ $registerAppRoutes = static function ($routes) {
     $routes->group('admin', ['filter' => 'adminauth'], static function ($routes) {
         $routes->get('metrics', 'Admin\Metrics::index');
         $routes->get('reports/mobilizations', 'Admin\Registrations::mobilizationReports');
+        $routes->get('corporates', 'Admin\Corporates::index');
+        $routes->post('corporates', 'Admin\Corporates::create');
+        $routes->delete('corporates/(:num)', 'Admin\Corporates::delete/$1');
+        $routes->post('plants', 'Admin\Corporates::createPlant');
+        $routes->delete('plants/(:num)', 'Admin\Corporates::deletePlant/$1');
         $routes->resource('activities', ['controller' => 'Admin\Activities']);
         $routes->resource('users', ['controller' => 'Admin\Users', 'only' => ['index', 'delete']]);
         $routes->resource('registrations', ['controller' => 'Admin\Registrations', 'only' => ['index', 'update', 'delete']]);
