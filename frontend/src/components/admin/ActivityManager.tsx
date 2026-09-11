@@ -170,13 +170,24 @@ export default function ActivityManager({ token }: { token: string }) {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Fecha del Evento</label>
+                  <label className={labelClass}>Fecha del Evento (Mes de Septiembre)</label>
                   <input
                     type="date"
+                    min="2026-09-01"
+                    max="2026-09-30"
                     value={editingActivity.event_date || ''}
                     onChange={e => setEditingActivity({ ...editingActivity, event_date: e.target.value })}
-                    className={inputClass}
+                    className={`${inputClass} ${
+                      editingActivity.event_date && editingActivity.event_date.split('-')[1] !== '09'
+                        ? 'border-red-500 bg-red-50 ring-1 ring-red-300'
+                        : ''
+                    }`}
                   />
+                  {editingActivity.event_date && editingActivity.event_date.split('-')[1] !== '09' && (
+                    <p className="text-[11px] font-bold text-red-600 mt-1">
+                      ⚠️ La fecha debe corresponder al mes de septiembre.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className={labelClass}>Días de anticipación para auto-cancelar</label>

@@ -81,14 +81,14 @@ class Registrations extends ResourceController
         }
 
         // Validate September Date
-        $regDate = $this->request->getVar('registration_date');
+        $regDate = $this->request->getVar('registration_date') ?: $this->request->getVar('scheduled_date');
         if (!$regDate) {
             return $this->failValidationErrors(['registration_date' => 'La fecha es requerida.']);
         }
         
         $dateObj = \DateTime::createFromFormat('Y-m-d', $regDate);
         if (!$dateObj || $dateObj->format('m') !== '09') {
-            return $this->failValidationErrors(['registration_date' => 'La actividad debe realizarse durante el mes de septiembre.']);
+            return $this->failValidationErrors(['registration_date' => 'La actividad debe realizarse exclusivamente durante el mes de septiembre.']);
         }
 
         // Handle Corporate Predictive Search (plant_id / corporate_id)
@@ -110,6 +110,9 @@ class Registrations extends ResourceController
         $normKey = strtolower(trim((string)$rawModality));
         $modality = $modalityMap[$normKey] ?? 'Corporativa';
 
+        $totalVolunteers = $this->request->getVar('total_volunteers') ?: $this->request->getVar('volunteer_count') ?: 1;
+        $durationHours = $this->request->getVar('individual_hours_duration') ?: $this->request->getVar('duration_hours') ?: 0;
+
         $data = [
             'campaign_id' => $campaign['id'],
             'corporate_id' => $corporateId,
@@ -117,8 +120,8 @@ class Registrations extends ResourceController
             'division_id' => $divisionId ?: null,
             'user_id' => $userId,
             'registration_date' => $regDate,
-            'total_volunteers' => $this->request->getVar('total_volunteers') ?: 1,
-            'individual_hours_duration' => $this->request->getVar('individual_hours_duration') ?: 0,
+            'total_volunteers' => (int) $totalVolunteers,
+            'individual_hours_duration' => (float) $durationHours,
             'accompanied_by_fuch' => $this->request->getVar('accompanied_by_fuch') ? 1 : 0,
             'modality' => $modality,
             'status' => 'approved',

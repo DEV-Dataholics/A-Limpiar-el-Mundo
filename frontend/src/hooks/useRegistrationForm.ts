@@ -71,12 +71,22 @@ export function useRegistrationForm() {
     // Si es institucional, activityId es obligatorio, si no, customActivityName es obligatorio
     const hasNameOrId = activityType === 'Institucional' ? activityId !== '' : customActivityName !== '';
 
+    // Validar restricción estricta de mes de septiembre
+    const isSeptember = scheduledDate && scheduledDate.split('-')[1] === '09';
+
     return hasNameOrId && description && activityType && locationName && 
-           scheduledDate && volunteerCount > 0 && evidenceLinks;
+           isSeptember && volunteerCount > 0 && evidenceLinks;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validación de seguridad de fecha en septiembre
+    if (!scheduledDate || scheduledDate.split('-')[1] !== '09') {
+      setError('La actividad debe realizarse exclusivamente durante el mes de septiembre de 2026.');
+      return;
+    }
+
     if (!canSubmit()) return;
 
     setLoading(true);
@@ -99,13 +109,16 @@ export function useRegistrationForm() {
       
       formData.append('description', description);
       formData.append('scheduled_date', scheduledDate);
+      formData.append('registration_date', scheduledDate);
       formData.append('volunteer_count', volunteerCount.toString());
+      formData.append('total_volunteers', volunteerCount.toString());
       formData.append('activity_type', activityType);
       formData.append('modality', activityType);
       formData.append('group_name', groupName);
       formData.append('location_name', locationName);
       formData.append('location_address', `${municipality}, ${state}`);
       formData.append('duration_hours', durationHours);
+      formData.append('individual_hours_duration', durationHours);
       formData.append('beneficiaries_count', beneficiariesCount);
       formData.append('testimonials', testimonials);
       formData.append('evidence_links', evidenceLinks);
