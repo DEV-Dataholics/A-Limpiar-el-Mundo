@@ -42,16 +42,16 @@ class Metrics extends ResourceController
                 'pending_approvals'   => $pendingApprovals,
             ];
 
-            // Top 3 Corporativos
+            // Top 3 Corporativos por Actividades Registradas
             $builder = $db->table('activities a')
-                ->select('c.name as corporate_name, COUNT(a.id) as total_activities')
+                ->select('COALESCE(c.name, "Organización / Colectivo") as corporate_name, COUNT(a.id) as total_activities, COALESCE(SUM(a.total_volunteers), 0) as total_volunteers')
                 ->join('corporates c', 'c.id = a.corporate_id', 'left')
                 ->where('a.deleted_at', null)
                 ->where('a.status', 'approved');
             if ($month) {
                 $builder->where('MONTH(a.registration_date)', $month);
             }
-            $topCorporates = $builder->groupBy('a.corporate_id')
+            $topCorporates = $builder->groupBy(['a.corporate_id', 'c.name'])
                 ->orderBy('total_activities', 'DESC')
                 ->limit(3)
                 ->get()
