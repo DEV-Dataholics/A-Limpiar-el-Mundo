@@ -16,12 +16,27 @@ BACKEND_FILES = [
     ("api/app/Config/Routes.php", "/api/app/Config/Routes.php"),
     ("api/app/Filters/AdminAuthFilter.php", "/api/app/Filters/AdminAuthFilter.php"),
     ("api/app/Controllers/Auth.php", "/api/app/Controllers/Auth.php"),
+    ("api/app/Controllers/Activities.php", "/api/app/Controllers/Activities.php"),
+    ("api/app/Controllers/Admin/Activities.php", "/api/app/Controllers/Admin/Activities.php"),
     ("api/app/Controllers/Admin/Corporates.php", "/api/app/Controllers/Admin/Corporates.php"),
     ("api/app/Controllers/Admin/Metrics.php", "/api/app/Controllers/Admin/Metrics.php"),
+    ("api/app/Controllers/Admin/Registrations.php", "/api/app/Controllers/Admin/Registrations.php"),
     ("api/app/Controllers/Admin/Users.php", "/api/app/Controllers/Admin/Users.php"),
     ("api/app/Controllers/CorporateController.php", "/api/app/Controllers/CorporateController.php"),
     ("api/app/Controllers/Registrations.php", "/api/app/Controllers/Registrations.php"),
 ]
+
+# Auto-descubrir recursivamente cualquier otro controlador PHP en api/app/Controllers
+controllers_dir = os.path.join(BASE_DIR, "api", "app", "Controllers")
+for root, _, files in os.walk(controllers_dir):
+    for f in files:
+        if f.endswith(".php"):
+            full_p = os.path.join(root, f)
+            rel_p = os.path.relpath(full_p, BASE_DIR).replace("\\", "/")
+            remote_p = "/" + rel_p
+            if (rel_p, remote_p) not in BACKEND_FILES:
+                BACKEND_FILES.append((rel_p, remote_p))
+
 
 def navigate_to(ftp, remote_dir):
     ftp.cwd("/")
