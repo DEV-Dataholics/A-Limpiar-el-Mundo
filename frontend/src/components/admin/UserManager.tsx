@@ -137,9 +137,9 @@ export default function UserManager({ token }: { token: string }) {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 md:space-y-5 animate-fade-in flex flex-col flex-1 min-h-0 h-full">
       {/* Encabezado con Botón de Exportación */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-shrink-0">
         <div>
           <h3 className="font-antonio text-2xl text-[#0044B5] uppercase flex items-center gap-2">
             <span className="divider-gold" />
@@ -164,7 +164,7 @@ export default function UserManager({ token }: { token: string }) {
       </div>
 
       {/* Barra de Filtros Dinámicos (TKT-UW-004) */}
-      <div className="bg-white rounded-2xl border border-[#D8E2F0] shadow-sm p-4">
+      <div className="bg-white rounded-2xl border border-[#D8E2F0] shadow-sm p-4 flex-shrink-0">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Búsqueda por Nombre / Correo / Empresa */}
           <div>
@@ -240,8 +240,8 @@ export default function UserManager({ token }: { token: string }) {
       </div>
 
       {/* Tabla de Usuarios con Sticky Header y Columnas de Planta / Actividades */}
-      <div className="bg-white rounded-2xl border border-[#D8E2F0] shadow-sm overflow-hidden">
-        <div className="overflow-auto max-h-[580px] custom-scrollbar">
+      <div className="bg-white rounded-2xl border border-[#D8E2F0] shadow-sm overflow-hidden flex-1 flex flex-col min-h-0">
+        <div className="overflow-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse">
             <thead className="bg-[#F4F6FA] text-[#4A5568] text-xs uppercase tracking-wider border-b border-[#D8E2F0] sticky top-0 z-10 shadow-xs">
               <tr>

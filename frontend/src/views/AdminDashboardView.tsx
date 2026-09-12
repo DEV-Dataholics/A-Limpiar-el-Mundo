@@ -204,10 +204,7 @@ export default function AdminDashboardView() {
           </div>
         </aside>
 
-        {/* ══════════════════════════════════════════
-            CONTENIDO PRINCIPAL
-        ══════════════════════════════════════════ */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 min-w-0">
+        <main className={`flex-1 min-w-0 p-6 md:p-8 flex flex-col ${activeTab === 'users' ? 'overflow-y-auto md:overflow-hidden' : 'overflow-y-auto'}`}>
 
           {/* ── MÉTRICAS ── */}
           {activeTab === 'metrics' && (
@@ -599,7 +596,11 @@ export default function AdminDashboardView() {
           {activeTab === 'activities'    && <ActivityManager token={token!} />}
           {activeTab === 'corporates'    && <CorporateManager token={token!} />}
           {activeTab === 'registrations' && <RegistrationManager token={token!} />}
-          {activeTab === 'users'         && <UserManager token={token!} />}
+          {activeTab === 'users'         && (
+            <div className="flex-1 flex flex-col min-h-0">
+              <UserManager token={token!} />
+            </div>
+          )}
         </main>
       </div>
     </div>
