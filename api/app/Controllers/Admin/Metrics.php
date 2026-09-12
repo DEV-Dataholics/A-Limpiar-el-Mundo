@@ -44,7 +44,16 @@ class Metrics extends ResourceController
 
             // Top 3 Corporativos por Actividades Registradas
             $builder = $db->table('activities a')
-                ->select('COALESCE(c.name, "Organización / Colectivo") as corporate_name, COUNT(a.id) as total_activities, COALESCE(SUM(a.total_volunteers), 0) as total_volunteers')
+                ->select('
+                    COALESCE(c.name, "Organización / Colectivo") as name,
+                    COALESCE(c.name, "Organización / Colectivo") as corporate_name,
+                    COUNT(a.id) as total_activities,
+                    COUNT(a.id) as count,
+                    COALESCE(SUM(a.total_volunteers), 0) as total_volunteers,
+                    COALESCE(SUM(a.total_volunteers), 0) as volunteers,
+                    COALESCE(SUM(a.total_volunteers * a.individual_hours_duration), 0) as hours,
+                    COALESCE(SUM(a.total_volunteers * a.individual_hours_duration), 0) as total_hours
+                ')
                 ->join('corporates c', 'c.id = a.corporate_id', 'left')
                 ->where('a.deleted_at', null)
                 ->where('a.status', 'approved');
@@ -56,6 +65,44 @@ class Metrics extends ResourceController
                 ->limit(3)
                 ->get()
                 ->getResultArray();
+
+            // Institutional Activities (Causas Institucionales de activities_catalog)
+            $instBuilder = $db->table('activities_catalog')
+                ->where('type', 'institutional');
+            if ($db->fieldExists('deleted_at', 'activities_catalog')) {
+                $instBuilder->where('deleted_at', null);
+            }
+            $rawInstitutional = $instBuilder->get()->getResultArray();
+            $institutional = [];
+
+            foreach ($rawInstitutional as $cat) {
+                $catId = (int) $cat['id'];
+                $catName = $cat['name'];
+
+                $volBuilder = $db->table('activities')
+                    ->select('COALESCE(SUM(total_volunteers), 0) AS value')
+                    ->where('deleted_at', null)
+                    ->where('status', 'approved')
+                    ->groupStart()
+                        ->like('description', $catName)
+                        ->orWhere('modality', 'Institucional')
+                    ->groupEnd();
+                if ($month) {
+                    $volBuilder->where('MONTH(registration_date)', $month);
+                }
+                $currentRegs = (int) ($volBuilder->get()->getRow()->value ?? 0);
+
+                $institutional[] = [
+                    'id'                    => $catId,
+                    'name'                  => $catName,
+                    'description'           => $cat['description'] ?? '',
+                    'min_capacity'          => (int) ($cat['min_capacity'] ?? 0),
+                    'max_capacity'          => (int) ($cat['max_capacity'] ?? 100),
+                    'current_registrations' => $currentRegs,
+                    'event_date'            => $cat['event_date'] ?? '',
+                    'status'                => $cat['status'] ?? 'published',
+                ];
+            }
 
             // Hierarchical Location/Plant Breakdown
             $builder = $db->table('activities a')
@@ -72,14 +119,20 @@ class Metrics extends ResourceController
                 ->get()
                 ->getResultArray();
 
+            $commBuilder = $db->table('activities_catalog')->where('type', 'community');
+            if ($db->fieldExists('deleted_at', 'activities_catalog')) {
+                $commBuilder->where('deleted_at', null);
+            }
+            $communityCount = $commBuilder->countAllResults();
+
             return $this->respond([
                 'status' => 200,
                 'data'   => [
                     'general'         => $general,
                     'top_corporates'  => $topCorporates,
-                    'institutional'   => $topCorporates,
+                    'institutional'   => $institutional,
                     'locations'       => $locations,
-                    'community_count' => 0,
+                    'community_count' => $communityCount,
                 ]
             ]);
         } catch (\Throwable $e) {

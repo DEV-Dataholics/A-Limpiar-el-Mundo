@@ -304,7 +304,7 @@ export default function AdminDashboardView() {
                       <div key={index} className="card-brand p-5 relative overflow-hidden flex flex-col items-center text-center">
                         <div className={`absolute top-0 w-full h-2 ${index === 0 ? 'bg-[#FFBA00]' : index === 1 ? 'bg-slate-300' : 'bg-orange-300'}`}></div>
                         <div className="text-4xl mb-3 mt-2">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</div>
-                        <h4 className="font-bold text-lg text-[#1A2340] mb-1 line-clamp-1">{corp.name}</h4>
+                        <h4 className="font-bold text-lg text-[#1A2340] mb-1 line-clamp-1">{corp.name || (corp as any).corporate_name || 'Corporativo'}</h4>
                         <div className="text-[#0044B5] font-black text-2xl">{corp.hours || 0} hrs</div>
                         <div className="text-xs text-[#4A5568] uppercase font-bold mt-1">{corp.count || 0} Voluntarios</div>
                       </div>
@@ -320,12 +320,13 @@ export default function AdminDashboardView() {
                   Estatus de Causas Institucionales
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {metrics?.institutional.map(act => {
-                    const maxGoal = act.max_capacity || 1;
-                    const minGoal = act.min_capacity || 0;
-                    const progress = Math.min(100, (act.current_registrations / maxGoal) * 100);
-                    const reachedMin = act.current_registrations >= minGoal;
-                    const reachedMax = act.current_registrations >= maxGoal;
+                  {(metrics?.institutional || []).map(act => {
+                    const maxGoal = Number(act.max_capacity) || 1;
+                    const minGoal = Number(act.min_capacity) || 0;
+                    const currentRegs = Number(act.current_registrations) || 0;
+                    const progress = Math.min(100, (currentRegs / maxGoal) * 100);
+                    const reachedMin = currentRegs >= minGoal;
+                    const reachedMax = currentRegs >= maxGoal;
                     // Posición del marcador mínimo en la barra (%)
                     const minMarkerPos = Math.min(100, (minGoal / maxGoal) * 100);
                     return (
@@ -351,7 +352,7 @@ export default function AdminDashboardView() {
 
                         <div className="mb-4">
                           <div className="flex justify-between text-xs text-[#4A5568] mb-2 font-semibold">
-                            <span>{act.current_registrations.toLocaleString()} Voluntarios</span>
+                            <span>{currentRegs.toLocaleString()} Voluntarios</span>
                             <span className="text-[#0044B5] font-black">Meta: {maxGoal.toLocaleString()}</span>
                           </div>
                           {/* Barra de progreso con marcador de mínimo */}
@@ -393,6 +394,11 @@ export default function AdminDashboardView() {
                       </div>
                     );
                   })}
+                  {(!metrics?.institutional || metrics.institutional.length === 0) && (
+                    <div className="col-span-full py-8 text-center text-[#9AA3B4] italic bg-white rounded-2xl border border-[#D8E2F0]">
+                      No hay causas institucionales registradas en el catálogo.
+                    </div>
+                  )}
                 </div>
               </section>
 
@@ -404,9 +410,9 @@ export default function AdminDashboardView() {
                     Localidades de Incidencia (Por Planta y División)
                   </h3>
                   <div className="space-y-3 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
-                    {metrics?.locations.map((loc, idx) => {
+                    {(metrics?.locations || []).map((loc, idx) => {
                       const count = Number(loc.total_activities ?? loc.count ?? 0);
-                      const totalActions = metrics.general.total_actions || 1;
+                      const totalActions = metrics?.general?.total_actions || 1;
                       const pct = Math.min(100, Math.round((count / totalActions) * 100));
                       return (
                         <div key={idx} className="flex items-center gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">

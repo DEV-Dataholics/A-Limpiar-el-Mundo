@@ -95,21 +95,21 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
         <div className={`grid grid-cols-1 ${showAdminControls ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-10`}>
           <div className="relative group/stat flex flex-col items-center text-center md:items-start md:text-left pl-0 md:pl-6 border-l-0 md:border-l-4 border-[#0044B5]">
             <p className="text-6xl font-antonio text-[#0044B5] mb-1 group-hover/stat:text-[#FFBA00] transition-colors">
-              {data.general.total_volunteers.toLocaleString()}
+              {(data?.general?.total_volunteers || 0).toLocaleString()}
             </p>
             <p className="text-xs text-[#4A5568] uppercase font-bold tracking-[0.2em]">Voluntarios</p>
           </div>
           
           <div className="relative group/stat flex flex-col items-center text-center md:items-start md:text-left pl-0 md:pl-6 border-l-0 md:border-l-4 border-[#FFBA00]">
             <p className="text-6xl font-antonio text-[#0044B5] mb-1 group-hover/stat:text-[#FFBA00] transition-colors">
-              {data.general.total_actions.toLocaleString()}
+              {(data?.general?.total_actions || 0).toLocaleString()}
             </p>
             <p className="text-xs text-[#4A5568] uppercase font-bold tracking-[0.2em]">Actividades</p>
           </div>
           
           <div className="relative group/stat flex flex-col items-center text-center md:items-start md:text-left pl-0 md:pl-6 border-l-0 md:border-l-4 border-[#002D7A]">
             <p className="text-6xl font-antonio text-[#0044B5] mb-1 group-hover/stat:text-[#FFBA00] transition-colors">
-              {Math.round(data.general.total_hours).toLocaleString()}
+              {Math.round(data?.general?.total_hours || 0).toLocaleString()}
             </p>
             <p className="text-xs text-[#4A5568] uppercase font-bold tracking-[0.2em]">Horas de Impacto</p>
           </div>
@@ -117,7 +117,7 @@ export default function MetricsDashboardView({ showAdminControls = false }: { sh
           {showAdminControls && (
             <div className="relative group/stat flex flex-col items-center text-center md:items-start md:text-left pl-0 md:pl-6 border-l-0 md:border-l-4 border-[#FFBA00]/60">
               <p className="text-6xl font-antonio text-[#FFBA00] mb-1 group-hover/stat:text-[#0044B5] transition-colors">
-                {data.general.total_beneficiaries.toLocaleString()}
+                {(data?.general?.total_beneficiaries || 0).toLocaleString()}
               </p>
               <p className="text-xs text-[#4A5568] uppercase font-bold tracking-[0.2em]">Beneficiarios</p>
             </div>
