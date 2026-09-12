@@ -22,14 +22,27 @@ class CorporateController extends ResourceController
         $builder->join('corporate_divisions cd', 'cd.id = cp.division_id', 'left');
 
         if (!empty($query)) {
-            $builder->groupStart()
-                    ->like('c.name', $query)
-                    ->orLike('cd.name', $query)
-                    ->orLike('cp.name', $query)
-                    ->groupEnd();
+            $words = array_values(array_filter(explode(' ', $query)));
+            if (count($words) > 1) {
+                $builder->groupStart();
+                foreach ($words as $w) {
+                    $builder->groupStart()
+                            ->like('c.name', $w)
+                            ->orLike('cd.name', $w)
+                            ->orLike('cp.name', $w)
+                            ->groupEnd();
+                }
+                $builder->groupEnd();
+            } else {
+                $builder->groupStart()
+                        ->like('c.name', $query)
+                        ->orLike('cd.name', $query)
+                        ->orLike('cp.name', $query)
+                        ->groupEnd();
+            }
         }
 
-        $builder->limit(15);
+        $builder->limit(30);
         $plantResults = $builder->get()->getResultArray();
 
         foreach ($plantResults as $row) {
@@ -60,9 +73,18 @@ class CorporateController extends ResourceController
         $corpBuilder = $db->table('corporates c');
         $corpBuilder->select('c.id as corporate_id, c.name as corporate_name');
         if (!empty($query)) {
-            $corpBuilder->like('c.name', $query);
+            $words = array_values(array_filter(explode(' ', $query)));
+            if (count($words) > 1) {
+                $corpBuilder->groupStart();
+                foreach ($words as $w) {
+                    $corpBuilder->like('c.name', $w);
+                }
+                $corpBuilder->groupEnd();
+            } else {
+                $corpBuilder->like('c.name', $query);
+            }
         }
-        $corpBuilder->limit(8);
+        $corpBuilder->limit(15);
         $corpResults = $corpBuilder->get()->getResultArray();
 
         foreach ($corpResults as $row) {

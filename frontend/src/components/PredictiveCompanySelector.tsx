@@ -38,10 +38,13 @@ export default function PredictiveCompanySelector({
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const skipSearchRef = useRef(false);
 
-  // Sincronizar valor externo
+  // Sincronizar valor externo cuando el padre lo modifique directamente
   useEffect(() => {
-    setQuery(value);
+    if (value !== query) {
+      setQuery(value);
+    }
   }, [value]);
 
   // Cerrar dropdown al hacer clic fuera
@@ -65,7 +68,6 @@ export default function PredictiveCompanySelector({
       const data = await res.json();
       const items = Array.isArray(data) ? data : (data.data || []);
       setResults(items);
-      setShowDropdown(true);
     } catch (err) {
       console.error("Error fetching corporates:", err);
     } finally {
@@ -75,19 +77,23 @@ export default function PredictiveCompanySelector({
 
   // Debounce para búsqueda conforme teclea
   useEffect(() => {
+    if (skipSearchRef.current) {
+      skipSearchRef.current = false;
+      return;
+    }
+
     const fetchDebounce = setTimeout(() => {
-      if (query.trim().length >= 1 && query !== value) {
-        fetchSuggestions(query);
-      }
-    }, 250);
+      fetchSuggestions(query);
+    }, 200);
 
     return () => clearTimeout(fetchDebounce);
-  }, [query, value]);
+  }, [query]);
 
   const handleSelect = (entity: Entity) => {
+    skipSearchRef.current = true;
     const displayText = entity.display_name || entity.name || '';
-    onChange(displayText);
     setQuery(displayText);
+    onChange(displayText);
     setShowDropdown(false);
     if (onSelectEntity) {
       onSelectEntity(entity);
@@ -95,19 +101,20 @@ export default function PredictiveCompanySelector({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    skipSearchRef.current = false;
     const nextVal = e.target.value;
     setQuery(nextVal);
     onChange(nextVal);
+    setShowDropdown(true);
     if (onClearEntity) {
       onClearEntity();
     }
   };
 
   const handleFocus = () => {
+    setShowDropdown(true);
     if (results.length === 0) {
       fetchSuggestions(query);
-    } else {
-      setShowDropdown(true);
     }
   };
 
