@@ -319,7 +319,8 @@ export default function RegistrationManager({ token }: { token: string }) {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
-      setRegistrations(Array.isArray(data) ? data : []);
+      const list = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+      setRegistrations(list);
     } catch (error) {
       console.error("Error fetching registrations", error);
       setRegistrations([]);

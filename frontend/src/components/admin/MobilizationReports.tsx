@@ -34,6 +34,7 @@ const TABS = [
   { key: 'Personal', label: 'Personal', icon: '👤' },
   { key: 'Sociedad civil', label: 'Sociedad Civil', icon: '🌐' },
   { key: 'Escuela', label: 'Escuela', icon: '🏫' },
+  { key: 'Institucional', label: 'Institucional', icon: '🏛️' },
 ];
 
 const STATUS_BADGE: Record<string, { cls: string; label: string }> = {
@@ -329,7 +330,8 @@ export default function MobilizationReports() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const json = await res.json();
-      setData(Array.isArray(json.data) ? json.data : []);
+      const list = Array.isArray(json) ? json : (Array.isArray(json?.data) ? json.data : []);
+      setData(list);
     } catch {
       setError('No se pudo conectar con el servidor.');
       setData([]);
