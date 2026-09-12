@@ -29,6 +29,7 @@ $registerAppRoutes = static function ($routes) {
     $routes->get('auth/validate-reset-token', 'Auth::validateResetToken');
     $routes->post('auth/reset-password', 'Auth::resetPassword');
     $routes->post('auth/resend-welcome', 'Auth::resendWelcome');
+    $routes->get('auth/sync-sc-users', 'Auth::syncSomosComunidadUsers');
     $routes->get('users', 'Auth::listUsers');
 
     $routes->get('corporates/search', 'CorporateController::search');

@@ -50,6 +50,116 @@ class Auth extends ResourceController
         return $this->respond(['status' => 'fixed']);
     }
 
+    public function syncSomosComunidadUsers()
+    {
+        try {
+            $scDb = null;
+            $credentials = [
+                ['user' => 'noodluis_DEV_SC', 'pass' => 'VX^uU~Tn7*w=', 'db' => 'noodluis_somoscomunidad'],
+                ['user' => 'noodluis_DEV_SC', 'pass' => 'wXz%-m.INKs&', 'db' => 'noodluis_somoscomunidad'],
+                ['user' => 'noodluis_DEV_SC', 'pass' => 'IXG,r%HoJ&Xp', 'db' => 'noodluis_somoscomunidad'],
+                ['user' => 'noodluis',        'pass' => '~Ll3Qyv;p!-6', 'db' => 'noodluis_somoscomunidad'],
+                ['user' => 'noodluis',        'pass' => 'b}%gI?we_2vz', 'db' => 'noodluis_somoscomunidad'],
+                ['user' => 'noodluis_DEV_SC', 'pass' => 'VX^uU~Tn7*w=', 'db' => 'somos_comunidad'],
+                ['user' => 'noodluis_DEV_SC', 'pass' => 'wXz%-m.INKs&', 'db' => 'somos_comunidad'],
+                ['user' => 'noodluis_DEV_SC', 'pass' => 'IXG,r%HoJ&Xp', 'db' => 'somos_comunidad'],
+                ['user' => 'noodluis',        'pass' => '~Ll3Qyv;p!-6', 'db' => 'somos_comunidad'],
+                ['user' => 'noodluis',        'pass' => 'b}%gI?we_2vz', 'db' => 'somos_comunidad'],
+            ];
+
+            $errors = [];
+            foreach ($credentials as $cred) {
+                try {
+                    $config = [
+                        'DSN'      => '',
+                        'hostname' => 'localhost',
+                        'username' => $cred['user'],
+                        'password' => $cred['pass'],
+                        'database' => $cred['db'],
+                        'DBDriver' => 'MySQLi',
+                        'DBPrefix' => '',
+                        'pConnect' => false,
+                        'DBDebug'  => false,
+                        'charset'  => 'utf8mb4',
+                        'DBCollat' => 'utf8mb4_general_ci',
+                        'swapPre'  => '',
+                        'encrypt'  => false,
+                        'compress' => false,
+                        'strictOn' => false,
+                        'failover' => [],
+                        'port'     => 3306,
+                    ];
+                    $conn = \Config\Database::connect($config);
+                    $count = $conn->table('users')->countAllResults();
+                    if ($count > 0) {
+                        $scDb = $conn;
+                        break;
+                    }
+                } catch (\Throwable $e) {
+                    $errors[] = $cred['user'] . '@' . $cred['db'] . ': ' . $e->getMessage();
+                    continue;
+                }
+            }
+
+            if (!$scDb) {
+                return $this->respond([
+                    'status' => 500,
+                    'error'  => 'No fue posible conectar a la base de datos de Somos Comunidad.',
+                    'debug'  => $errors
+                ], 500);
+            }
+
+            $scUsers = $scDb->table('users')->get()->getResultArray();
+
+            $currentDb = \Config\Database::connect();
+            $existing = $currentDb->table('users')->select('email')->get()->getResultArray();
+            $existingEmails = array_flip(array_map('strtolower', array_column($existing, 'email')));
+
+            $inserted = 0;
+            $skipped = 0;
+
+            foreach ($scUsers as $u) {
+                $email = strtolower(trim($u['email'] ?? ''));
+                if (empty($email) || isset($existingEmails[$email])) {
+                    $skipped++;
+                    continue;
+                }
+
+                $userData = [
+                    'role_id'           => isset($u['role_id']) ? (int)$u['role_id'] : 2,
+                    'name'              => $u['name'] ?? '',
+                    'last_name'         => $u['last_name'] ?? '',
+                    'age'               => isset($u['age']) && !empty($u['age']) ? (int)$u['age'] : 25,
+                    'email'             => $u['email'],
+                    'password'          => !empty($u['password']) ? $u['password'] : password_hash('SomosComunidad$2026', PASSWORD_BCRYPT),
+                    'phone'             => $u['phone'] ?? null,
+                    'organization_name' => $u['organization_name'] ?? null,
+                    'state'             => $u['state'] ?? 'Chihuahua',
+                    'municipality'      => $u['municipality'] ?? null,
+                    'plant_id'          => $u['plant_id'] ?? null,
+                    'division_id'       => $u['division_id'] ?? null,
+                    'created_at'        => $u['created_at'] ?? date('Y-m-d H:i:s'),
+                    'updated_at'        => $u['updated_at'] ?? date('Y-m-d H:i:s'),
+                ];
+
+                $currentDb->table('users')->insert($userData);
+                $existingEmails[$email] = true;
+                $inserted++;
+            }
+
+            return $this->respond([
+                'status'   => 200,
+                'message'  => "Sincronización completada exitosamente.",
+                'total_sc' => count($scUsers),
+                'inserted' => $inserted,
+                'skipped'  => $skipped,
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'syncSomosComunidadUsers error: ' . $e->getMessage());
+            return $this->failServerError('Error al sincronizar usuarios: ' . $e->getMessage());
+        }
+    }
+
     public function register()
     {
         $rules = [
