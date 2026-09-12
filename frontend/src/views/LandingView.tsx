@@ -590,9 +590,19 @@ export default function LandingView() {
           </div>
         </div>
 
-        {/* Sub-barra inferior con crédito discreto */}
         <div className="container mx-auto px-6 md:px-12 lg:px-16 mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-3">
-          <p>© {new Date().getFullYear()} United Way Chihuahua. Todos los derechos reservados.</p>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
+            <span>© {new Date().getFullYear()} United Way Chihuahua. Todos los derechos reservados.</span>
+            <span>•</span>
+            <a
+              href="https://uwchihuahua.org/terminos-y-condiciones/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/70 hover:text-white underline underline-offset-2 transition-colors"
+            >
+              Términos y Condiciones
+            </a>
+          </div>
           <p className="flex items-center gap-1.5">
             <span>Desarrollado por</span>
             <a

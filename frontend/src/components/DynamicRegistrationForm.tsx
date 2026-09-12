@@ -307,7 +307,7 @@ export default function DynamicRegistrationForm() {
                 className="mt-1 w-5 h-5 accent-[#0044B5] rounded border-[#CBD5E1]"
               />
               <span className="text-sm text-[#4A5568] leading-relaxed group-hover:text-[#1A2340] transition-colors">
-                He leído y acepto los <a href="#" className="text-[#0044B5] font-semibold underline decoration-[#0044B5]/30 underline-offset-2">Términos, Condiciones y Aviso de Privacidad</a> de United Way Chihuahua. Autorizo el uso de las fotografías y testimonios proporcionados para fines de reporte e impacto social de la organización.
+                He leído y acepto los <a href="https://uwchihuahua.org/terminos-y-condiciones/" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-[#0044B5] font-semibold underline decoration-[#0044B5]/30 underline-offset-2 hover:text-[#002D7A] hover:decoration-[#0044B5] transition-colors">Términos, Condiciones y Aviso de Privacidad</a> de United Way Chihuahua. Autorizo el uso de las fotografías y testimonios proporcionados para fines de reporte e impacto social de la organización.
               </span>
             </label>
           </div>
